@@ -1,0 +1,5 @@
+__pycache__
+.idea
+doordu-push.log
+tests
+venv
