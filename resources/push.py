@@ -1,6 +1,6 @@
 """
 message = {
-    'huawei': ['08699060201997982000002590000001', 'token2'],
+    'huawei': ['08699060201997982000002590000001', '08643940102483282000002590000001'],
     'xiaomi': ['token1', 'token2'],
     'ios': ['d322940a6b4ecc8739b0c8413dcddfddad0b040c106a1b99ade359fb3f7728fb'],
     'topic': 'test',
@@ -9,7 +9,7 @@ message = {
     'title': '掉渣天的推送！！',
     'content': '吃葡萄不吐葡萄皮！！',
 }
-curl -d '{"ios": ["0e46cbe2098927e6a9a0062e30d877674296384ddcc79eecda3973467f6244bc"], "content": "this is content", "xiaomi": ["token1", "token2"], "topic": "test", "message": {"data": "This is data!", "expired_at": 1472023902}, "qos": 0, "title": "hello", "huawei": ["08699060201997982000002590000001", "token2"]}' http://127.0.0.1:8000/push
+curl -d '{"qos": 0, "message": {"expired_at": 1472023902, "data": "This is data!"}, "huawei": ["08699060201997982000002590000001", "08643940102483282000002590000001"], "content": "\\u5403\\u8461\\u8404\\u4e0d\\u5410\\u8461\\u8404\\u76ae\\uff01\\uff01", "xiaomi": ["token1", "token2"], "title": "\\u6389\\u6e23\\u5929\\u7684\\u63a8\\u9001\\uff01\\uff01", "topic": "test", "ios": ["d322940a6b4ecc8739b0c8413dcddfddad0b040c106a1b99ade359fb3f7728fb"]}' http://localhost:8000/push
 """
 import json
 import logging
@@ -42,30 +42,37 @@ class PushResource(Base):
         self.mqtt = MQTT(self.logger, self.config['mqtt']['host'],
                             self.config.getint('mqtt', 'port'))
 
-
     def on_post(self, req, resp):
-        """
-        发起推送
-        :param req: 请求实体
-        :param resp: 响应实体
-        :return: None
-        """
         content = req.stream.read()
         params = content.decode("utf-8")
         params = json.loads(params)
         self.logger.info(params)
         response = {}
 
-        with ThreadPoolExecutor(max_workers=4) as executor:
+        with ThreadPoolExecutor(max_workers=5) as executor:
             futures = []
-            if len(params['ios']) > 0:
-                futures.append(executor.submit(self.apns.push, params['ios'], params['title'], params['message']))
-            if len(params['huawei']) > 0:
-                futures.append(executor.submit(self.huawei.push, params['huawei'], params['title'], params['content']))
-            if len(params['xiaomi']) > 0:
-                futures.append(executor.submit(self.xiaomi.push, params['xiaomi'], params['title'], params['content']))
+            try:
+                if len(params['ios']) > 0:
+                    futures.append(executor.submit(self.apns.push, params['ios'], params['title']))
+            except Exception as e:
+                self.logger.error("抛出异常: %s", e)
 
-            futures.append(executor.submit(self.mqtt.push, params['topic'], params['qos'], json.dumps(params['message'])))
+            try:
+                if len(params['huawei']) > 0:
+                    futures.append(executor.submit(self.huawei.push, params['huawei'],
+                                                   params['title'], params['content']))
+            except Exception as e:
+                self.logger.error("抛出异常: %s", e)
+
+            try:
+                if len(params['xiaomi']) > 0:
+                    futures.append(executor.submit(self.xiaomi.push, params['xiaomi'],
+                                                   params['title'], params['content']))
+            except Exception as e:
+                self.logger.error("抛出异常: %s", e)
+
+            futures.append(executor.submit(self.mqtt.push, params['topic'], params['qos'],
+                           json.dumps(params['message'])))
 
             for future in as_completed(futures):
                 response.update(future.result())

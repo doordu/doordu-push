@@ -20,7 +20,7 @@ class Apns:
         self.conn = session.get_connection("push_sandbox" if use_sandbox else "push_production",
                                             cert_file=cert_file, passphrase='doordu123456')
 
-    def push(self, tokens, title, content):
+    def push(self, tokens, title, content={}):
         service = APNs(self.conn)
         invalid_tokens = []
         contain_invalid_token = False
