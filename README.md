@@ -27,6 +27,11 @@
     [mqtt]
     host = localhost                                    ; mosquitto ip
     port = 1883                                         ; mosquitto 端口
+    
+    [redis]
+    host = localhost                                    ; redis ip
+    port = 6379                                         ; redis port
+    auth = doordu                                       ; redis 连接密码
 
 ## 运行
 

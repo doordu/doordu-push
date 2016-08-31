@@ -9,7 +9,7 @@ message = {
     'title': '掉渣天的推送！！',
     'content': '吃葡萄不吐葡萄皮！！',
 }
-curl -d '{"qos": 0, "message": {"expired_at": 1472023902, "data": "This is data!"}, "huawei": ["08699060201997982000002590000001", "08643940102483282000002590000001"], "content": "\\u5403\\u8461\\u8404\\u4e0d\\u5410\\u8461\\u8404\\u76ae\\uff01\\uff01", "xiaomi": ["token1", "token2"], "title": "\\u6389\\u6e23\\u5929\\u7684\\u63a8\\u9001\\uff01\\uff01", "topic": "test", "ios": ["d322940a6b4ecc8739b0c8413dcddfddad0b040c106a1b99ade359fb3f7728fb"]}' http://localhost:8000/push
+curl -d '{"qos": 0, "message": {"expired_at": 1472023902, "data": "This is data!"}, "huawei": ["08699060201997982000002590000001", "08643940102483282000002590000001"], "content": "\\u5403\\u8461\\u8404\\u4e0d\\u5410\\u8461\\u8404\\u76ae\\uff01\\uff01", "xiaomi": ["token1", "token2"], "title": "\\u6389\\u6e23\\u5929\\u7684\\u63a8\\u9001\\uff01\\uff01", "topic": "test", "ios": ["d322940a6b4ecc8739b0c8413dcddfddad0b040c106a1b99ade359fb3f7728fb"]}' http://10.0.0.243:8082/push
 """
 import json
 import logging
