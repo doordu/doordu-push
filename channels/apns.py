@@ -55,7 +55,7 @@ class Apns:
 
             break
         self.logger.info("结束APNS推送")
-        return {'ios': invalid_tokens}
+        return {'invalid_ios_tokens': invalid_tokens}
 
 
 
