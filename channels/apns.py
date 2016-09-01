@@ -24,7 +24,7 @@ class Apns:
         service = APNs(self.conn)
         invalid_tokens = []
         contain_invalid_token = False
-        while True:
+        while tokens:
             self.logger.info("开始APNS推送")
             self.logger.info("Tokens: %s", tokens)
             self.logger.info("Title: %s", title)
