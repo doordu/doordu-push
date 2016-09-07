@@ -1,6 +1,6 @@
 import requests
 
-URL = 'https://api.xmpush.xiaomi.com/v3/message/alias'
+URL = 'https://api.xmpush.xiaomi.com/v3/message/regid'
 
 
 class XiaoMi:
@@ -23,7 +23,7 @@ class XiaoMi:
             'restricted_package_name': self.package_name,
             'notify_id': 2,
             'extra.notify_foreground': 1,
-            'alias': ','.join(tokens)
+            'registration_id': ','.join(tokens)
         }
 
         r = requests.post(URL, headers={'Authorization': 'key={}'.format(self.secret_key)},
