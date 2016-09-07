@@ -9,7 +9,7 @@ from apnsclient import *
 
 class Apns:
 
-    def __init__(self, logger, use_sandbox, cert_filename):
+    def __init__(self, logger, use_sandbox, cert_filename, passphrase):
         cert_file = os.path.join(os.path.dirname(__file__), os.path.pardir,
                     'certs', '{}_{}.pem'.format(cert_filename, 'dev' if use_sandbox else 'pro'))
 
@@ -18,7 +18,7 @@ class Apns:
 
         session = Session()
         self.conn = session.get_connection("push_sandbox" if use_sandbox else "push_production",
-                                            cert_file=cert_file, passphrase='doordu123456')
+                                            cert_file=cert_file, passphrase=passphrase)
 
     def push(self, tokens, title, content={}):
         service = APNs(self.conn)

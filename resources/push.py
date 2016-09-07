@@ -33,7 +33,7 @@ class PushResource(Base):
         :return: None
         """
         self.apns = Apns(self.logger, self.config['apns']['use_sandbox'],
-                         self.config['apns']['cert_filename'])
+                         self.config['apns']['cert_filename'], self.config['apns']['passphrase'])
         self.huawei = HuaWei(self.logger, self.config['huawei']['client_id'],
                              self.config['huawei']['client_secret'])
         self.xiaomi = XiaoMi(self.logger, self.config['xiaomi']['secret_key'],
