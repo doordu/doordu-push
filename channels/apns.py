@@ -20,7 +20,7 @@ class Apns:
         self.conn = session.get_connection("push_sandbox" if use_sandbox else "push_production",
                                             cert_file=cert_file, passphrase=passphrase)
 
-    def push(self, tokens, title, content={}):
+    def push(self, tokens, title, sound='default', content={}):
         service = APNs(self.conn)
         invalid_tokens = []
         contain_invalid_token = False
@@ -28,7 +28,7 @@ class Apns:
             self.logger.info("开始APNS推送")
             self.logger.info("Tokens: %s", tokens)
             self.logger.info("Title: %s", title)
-            message = Message(tokens, alert=title, badge=1, sound='default', extra=content)
+            message = Message(tokens, alert=title, badge=1, sound=sound, extra=content)
             try:
                 res = service.send(message)
             except binascii.Error:

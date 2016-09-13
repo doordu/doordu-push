@@ -15,6 +15,7 @@
     [apns]
     use_sandbox = yes                                   ; 生产环境配置为true
     cert_filename = doordu                              ; 通常不需要更改
+    passphrase = doordu123456                           ; 证书密钥
 
     [huawei]
     client_id = 10201628                                ; 通常不需要更改

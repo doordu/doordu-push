@@ -11,7 +11,10 @@ class MQTT:
         self.logger.info("开始MQTT推送")
         self.logger.info("topic: %s", topic)
         self.logger.info("QOS: %d", qos)
-        publish.single(topic, message, qos=qos, hostname=self.host,
-                       port=self.port)
+        try:
+            publish.single(topic, message, qos=qos, hostname=self.host,
+                           port=self.port)
+        except Exception:
+            self.logger.error("MQTT推送失败")
         self.logger.info("MQTT推送结束")
         return {'mqtt': None}
