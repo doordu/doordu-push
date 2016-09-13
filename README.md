@@ -24,6 +24,11 @@
     [xiaomi]
     package_name = com.doordu.mobile                    ; 通常不需要更改
     secret_key = xJB7WtOurXuwwP4zKGdDLQ==               ; 通常不需要更改
+    
+    [meizu]
+    app_id = 110015                                     ; 通常不需要更改
+    secret_key = 1e3412be25f44814827811fed0a1ff2c       ; 通常不需要更改
+    
 
     [mqtt]
     host = localhost                                    ; mosquitto ip
@@ -33,6 +38,7 @@
     host = localhost                                    ; redis ip
     port = 6379                                         ; redis port
     auth = doordu                                       ; redis 连接密码
+    
 
 ## 运行
 
