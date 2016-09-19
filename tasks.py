@@ -1,7 +1,7 @@
 import logging
 import configparser
-from concurrent.futures import ThreadPoolExecutor, as_completed
 import json
+from concurrent.futures import ThreadPoolExecutor, as_completed
 
 from celery import Celery, Task
 
