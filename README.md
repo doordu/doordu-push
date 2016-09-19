@@ -41,6 +41,7 @@
     
 
 ## 运行
+    celery -A tasks worker --loglevel=info --concurrency=1000 -P gevent
 
     gunicorn main:app -w 4 -b 0.0.0.0:8000
 
