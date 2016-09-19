@@ -1,3 +1,6 @@
+import OpenSSL
+OpenSSL.SSL.SSLv3_METHOD = OpenSSL.SSL.TLSv1_METHOD
+
 import logging
 import configparser
 from concurrent.futures import ThreadPoolExecutor, as_completed

@@ -1,6 +1,3 @@
-import OpenSSL
-OpenSSL.SSL.SSLv3_METHOD = OpenSSL.SSL.TLSv1_METHOD
-
 import os.path
 import binascii
 
@@ -8,7 +5,6 @@ from apnsclient import *
 
 
 class Apns:
-
     def __init__(self, logger, use_sandbox, cert_filename, passphrase):
         cert_file = os.path.join(os.path.dirname(__file__), os.path.pardir,
                     'certs', '{}_{}.pem'.format(cert_filename, 'dev' if use_sandbox else 'pro'))
