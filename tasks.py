@@ -62,7 +62,7 @@ class Push(Task):
                 if len(params['ios']) > 0:
                     futures.append(executor.submit(self.apns.push, params['ios'], params['title'],
                                    params['ios_sound'] if 'ios_sound' in params else 'default'),
-                                   params['ios_remove_token_url'] if 'ios_remove_token_url' in params else None)
+                                   params['clear_invalid_token_url'] if 'clear_invalid_token_url' in params else None)
             except Exception as e:
                 self.logger.error("抛出异常: %s", e)
 
