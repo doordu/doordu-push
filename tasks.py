@@ -1,6 +1,3 @@
-from gevent import monkey
-monkey.patch_ssl()
-
 import logging
 import configparser
 from concurrent.futures import ThreadPoolExecutor, as_completed
