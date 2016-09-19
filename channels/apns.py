@@ -72,7 +72,7 @@ class Apns:
         if invalid_tokens and ios_remove_token_url:
             payload = json.dumps({'invalid_ios_tokens': invalid_tokens})
             try:
-                requests.delete(ios_remove_token_url, payload, headers={'Content-Type': 'application/json'})
+                requests.delete(ios_remove_token_url, data=payload, headers={'Content-Type': 'application/json'})
             except Exception:
                 pass
 
