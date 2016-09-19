@@ -3,9 +3,11 @@ OpenSSL.SSL.SSLv3_METHOD = OpenSSL.SSL.TLSv1_METHOD
 
 import os.path
 import binascii
+import json
+
 
 from apnsclient import *
-
+import requests
 
 class Apns:
     def __init__(self, logger, use_sandbox, cert_filename, passphrase):
@@ -21,7 +23,7 @@ class Apns:
         # Send the message.
         self.srv = APNs(self.conn)
 
-    def push(self, tokens, title, sound='default', content={}):
+    def push(self, tokens, title, sound='default', ios_remove_token_url=None, content={}):
         self.logger.info("开始APNS推送")
         self.logger.info("Tokens: %s", tokens)
         # New message to 3 devices. You app will show badge 10 over app's icon.
@@ -66,6 +68,14 @@ class Apns:
                 break
 
         self.logger.info("APNS推送结束")
+
+        if invalid_tokens and ios_remove_token_url:
+            payload = json.dumps({'invalid_ios_tokens': invalid_tokens})
+            try:
+                requests.delete(ios_remove_token_url, payload, headers={'Content-Type': 'application/json'})
+            except Exception:
+                pass
+
 
         return {'invalid_ios_tokens': invalid_tokens}
 
