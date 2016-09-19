@@ -87,8 +87,8 @@ class PushResource(Base):
             futures.append(executor.submit(self.mqtt.push, params['topic'], params['qos'],
                            json.dumps(params['message'])))
 
-            for future in as_completed(futures):
-                response.update(future.result())
+            # for future in as_completed(futures):
+            #     response.update(future.result())
 
         self.logger.info("推送结果: %s", response)
 
