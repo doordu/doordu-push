@@ -1,5 +1,5 @@
-import OpenSSL
-OpenSSL.SSL.SSLv3_METHOD = OpenSSL.SSL.TLSv1_METHOD
+from gevent import monkey
+monkey.patch_ssl()
 
 import logging
 import configparser
