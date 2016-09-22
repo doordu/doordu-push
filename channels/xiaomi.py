@@ -19,10 +19,11 @@ class XiaoMi:
             'title': title,
             'description': content,
             'pass_through': 0,
-            'notify_type': -1,
+            'notify_type': 1,
             'restricted_package_name': self.package_name,
             'notify_id': 2,
             'extra.notify_foreground': 1,
+            'extra.sound_uri': 'android.resource://com.doordu.com/raw/ringtone_long',
             'registration_id': ','.join(tokens)
         }
 
