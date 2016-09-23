@@ -25,7 +25,7 @@ class Apns:
 
     def push(self, tokens, title, sound='default', ios_remove_token_url=None, content={}):
         self.logger.info("开始APNS推送")
-        self.logger.info("Tokens: %s", tokens)
+        self.logger.info("Tokens: %s, Sound: %s", tokens, sound)
         # New message to 3 devices. You app will show badge 10 over app's icon.
         message = Message(tokens,
                           alert=title, badge=1, sound=sound, extra=content)
@@ -35,7 +35,7 @@ class Apns:
             try:
                 res = self.srv.send(message)
             except binascii.Error:
-                self.logge.error("Token有误！")
+                self.logger.error("Token有误！")
                 break
             except Exception:
                 self.logger.error("Can't connect to APNs, looks like network is down")
@@ -70,6 +70,7 @@ class Apns:
         self.logger.info("APNS推送结束")
 
         if invalid_tokens and ios_remove_token_url:
+            self.logger.info("Invalid tokens: %s", invalid_tokens)
             payload = json.dumps({'invalid_ios_tokens': invalid_tokens})
             try:
                 requests.delete(ios_remove_token_url, data=payload, headers={'Content-Type': 'application/json'})
