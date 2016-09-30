@@ -1,0 +1,49 @@
+#!/bin/bash
+#
+# Celery for doordu push
+#
+# chkconfig:   - 20 80
+. /etc/rc.d/init.d/functions
+
+PROG_NAME="celery"
+PRO_PATH="/usr/local/doordu-push-new"
+PRO_BIN="celery"
+PRO_PID_FILE="$PRO_PATH/${PROG_NAME}.pid"
+FORK="4"
+
+cd $PRO_PATH
+source env/bin/activate
+RETVAL=0
+
+start(){
+    echo -n $"Starting $PROG_NAME: "
+    $PRO_BIN -A tasks worker --loglevel=info --concurrency=$FORK -P threads & echo $! > $PRO_PID_FILE &
+    RETVAL=$?
+}
+stop()
+{
+    echo -n $"Stopping $PROG_NAME: "
+    head -1 $PRO_PID_FILE | xargs kill -9
+    sleep 5
+    [ $RETVAL = 0 ] && rm -f $PRO_PID_FILE
+    RETVAL=$?
+}
+
+case "$1" in
+    start)
+        start
+        ;;
+    stop)
+        stop
+        ;;
+     restart)
+        stop && start
+        ;;
+    help)
+        $0 -h
+        ;;
+     *)
+         echo $"Usage: $PROG_NAME {start | stop | restart | help}"
+
+esac
+exit $RETVAL
