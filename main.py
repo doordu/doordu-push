@@ -9,7 +9,7 @@ from resources.online import OnlineResource
 app = falcon.API()
 
 config = configparser.ConfigParser()
-config.read(os.path.join(os.path.dirname(__file__),"config.ini"))
+config.read(os.path.join(os.path.dirname(__file__), "config.ini"))
 
 push = PushResource(config)
 online = OnlineResource(config)
