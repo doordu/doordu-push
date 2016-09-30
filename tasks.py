@@ -1,6 +1,7 @@
 import logging
 import configparser
 import json
+import os
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
 from celery import Celery, Task
@@ -12,7 +13,9 @@ from channels.meizu import MeiZu
 from channels.mqtt import MQTT
 
 config = configparser.ConfigParser()
-config.read("config.ini")
+
+
+config.read(os.path.join(os.path.dirname(__file__), "config.ini"))
 
 BROKER_URL = 'redis://:{}@{}:{}/0'.format(config['redis']['auth'], config['redis']['host'], config['redis']['port'])
 
@@ -32,7 +35,7 @@ class Push(Task):
 
     def __init__(self):
         self.logger = logging.getLogger('doordu-push')
-        fh = logging.FileHandler('doordu-push.log')
+        fh = logging.FileHandler(os.path.join(os.path.dirname(__file__),'doordu-push.log'))
         formatter = logging.Formatter(
             '%(asctime)s - %(name)s - %(levelname)s - %(filename)s - %(lineno)d - %(message)s')
         fh.setLevel(logging.INFO)
