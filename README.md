@@ -41,9 +41,12 @@
     
 
 ## 运行
+
     celery -A tasks worker --loglevel=info --concurrency=4 -P threads
 
-    gunicorn main:app -w 4 -b 0.0.0.0:8000
+    gunicorn main:app -w 4 -b 0.0.0.0:9700
+
+**注意**: 0.0.0.0应该设置内网IP
 
 **参数解释**
 
