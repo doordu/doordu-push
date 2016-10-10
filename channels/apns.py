@@ -18,6 +18,10 @@ class Apns:
         self.logger.info("注册APNS通道")
 
         session = Session()
+        self.use_sandbox = use_sandbox
+        self.cert_filename = cert_filename
+        self.cert_file = cert_file
+        self.passphrase = passphrase
         self.conn = session.get_connection("push_sandbox" if use_sandbox else "push_production",
                                             cert_file=cert_file, passphrase=passphrase)
         # Send the message.
@@ -37,6 +41,13 @@ class Apns:
             except binascii.Error:
                 self.logger.error("Token有误！")
                 break
+            except OpenSSL.SSL.SysCallError:
+                self.logger.error("SSL握手失败，重新尝试连接")
+                session = Session()
+                self.conn = session.get_connection("push_sandbox" if self.use_sandbox else "push_production",
+                                                   cert_file=self.cert_file, passphrase=self.passphrase)
+                # Send the message.
+                self.srv = APNs(self.conn)
             except Exception:
                 self.logger.error("Can't connect to APNs, looks like network is down")
                 break

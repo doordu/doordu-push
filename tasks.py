@@ -2,7 +2,7 @@ import logging
 import configparser
 import json
 import os
-from concurrent.futures import ThreadPoolExecutor, as_completed
+from concurrent.futures import ThreadPoolExecutor, as_completed, TimeoutError
 
 from celery import Celery, Task
 
@@ -93,8 +93,11 @@ class Push(Task):
 
             futures.append(executor.submit(self.mqtt.push, params['topic'], params['qos'],
                                            json.dumps(params['message'])))
+            try:
+                for future in as_completed(futures, timeout=5):
+                    response.update(future.result())
+            except TimeoutError as e:
+                self.logger.error("超时异常：%s", e)
 
-            for future in as_completed(futures):
-                response.update(future.result())
         return response
 
