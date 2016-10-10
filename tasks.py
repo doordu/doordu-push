@@ -48,7 +48,7 @@ class Push(Task):
         self.config = config
 
         self.apns = Apns(self.logger, self.config['apns']['use_sandbox'],
-                         self.config['apns']['cert_filename'], self.config['apns']['passphrase'])
+                         self.config['apns']['cert_filename'], self.config['apns']['passphrase'], client)
 
         self.huawei = HuaWei(self.logger, self.config['huawei']['client_id'],
                              self.config['huawei']['client_secret'])
@@ -69,7 +69,7 @@ class Push(Task):
                     futures.append(executor.submit(self.apns.push, params['ios'], params['title'],
                                    params['ios_sound'] if 'ios_sound' in params else 'default',
                                    params['clear_invalid_token_url'] if 'clear_invalid_token_url' in params else None,
-                                   params['message'], client))
+                                   params['message']))
             except Exception as e:
                 client.captureException()
                 self.logger.error("抛出异常: %s", e)
