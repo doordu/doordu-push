@@ -5,6 +5,7 @@ import os
 from concurrent.futures import ThreadPoolExecutor, as_completed, TimeoutError
 
 from celery import Celery, Task
+from raven import Client
 
 from channels.apns import Apns
 from channels.huawei import HuaWei
@@ -16,6 +17,8 @@ config = configparser.ConfigParser()
 
 
 config.read(os.path.join(os.path.dirname(__file__), "config.ini"))
+
+client = Client('https://fa6faa5cea834cbd9cfc404fb72de7aa:6b9ac91556d8405da3bf1f75e20e4239@sentry.io/104967')
 
 BROKER_URL = 'redis://:{}@{}:{}/0'.format(config['redis']['auth'], config['redis']['host'], config['redis']['port'])
 
@@ -66,8 +69,9 @@ class Push(Task):
                     futures.append(executor.submit(self.apns.push, params['ios'], params['title'],
                                    params['ios_sound'] if 'ios_sound' in params else 'default',
                                    params['clear_invalid_token_url'] if 'clear_invalid_token_url' in params else None,
-                                   params['message']))
+                                   params['message'], client))
             except Exception as e:
+                client.captureException()
                 self.logger.error("抛出异常: %s", e)
 
             try:
@@ -75,6 +79,7 @@ class Push(Task):
                     futures.append(executor.submit(self.huawei.push, params['huawei'],
                                                    params['title'], params['content']))
             except Exception as e:
+                client.captureException()
                 self.logger.error("抛出异常: %s", e)
 
             try:
@@ -82,6 +87,7 @@ class Push(Task):
                     futures.append(executor.submit(self.xiaomi.push, params['xiaomi'],
                                                    params['title'], params['content']))
             except Exception as e:
+                client.captureException()
                 self.logger.error("抛出异常: %s", e)
 
             try:
@@ -89,6 +95,7 @@ class Push(Task):
                     futures.append(executor.submit(self.meizu.push, params['meizu'],
                                                    params['title'], params['content']))
             except Exception as e:
+                client.captureException()
                 self.logger.error("抛出异常: %s", e)
 
             futures.append(executor.submit(self.mqtt.push, params['topic'], params['qos'],
@@ -97,6 +104,7 @@ class Push(Task):
                 for future in as_completed(futures, timeout=5):
                     response.update(future.result())
             except TimeoutError as e:
+                client.captureException()
                 self.logger.error("超时异常：%s", e)
 
         return response

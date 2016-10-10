@@ -10,7 +10,7 @@ from apnsclient import *
 import requests
 
 class Apns:
-    def __init__(self, logger, use_sandbox, cert_filename, passphrase):
+    def __init__(self, logger, use_sandbox, cert_filename, passphrase, raven):
         cert_file = os.path.join(os.path.dirname(__file__), os.path.pardir,
                     'certs', '{}_{}.pem'.format(cert_filename, 'dev' if use_sandbox else 'pro'))
 
@@ -22,6 +22,7 @@ class Apns:
         self.cert_filename = cert_filename
         self.cert_file = cert_file
         self.passphrase = passphrase
+        self.raven = raven
         self.conn = session.get_connection("push_sandbox" if use_sandbox else "push_production",
                                             cert_file=cert_file, passphrase=passphrase)
         # Send the message.
@@ -40,6 +41,7 @@ class Apns:
                 res = self.srv.send(message)
             except binascii.Error:
                 self.logger.error("Token有误！")
+                self.raven.captureMessage("Token有误! {}".format(tokens))
                 break
             except OpenSSL.SSL.SysCallError:
                 self.logger.error("SSL握手失败，重新尝试连接")
@@ -48,8 +50,11 @@ class Apns:
                                                    cert_file=self.cert_file, passphrase=self.passphrase)
                 # Send the message.
                 self.srv = APNs(self.conn)
+                self.raven.captureException()
+                continue
             except Exception:
                 self.logger.error("Can't connect to APNs, looks like network is down")
+                self.raven.captureException()
                 break
             else:
                 # Check failures. Check codes in APNs reference docs.
