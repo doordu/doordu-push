@@ -47,7 +47,7 @@ class Push(Task):
         self.logger.setLevel(logging.INFO)
         self.config = config
 
-        self.apns = Apns(self.logger, self.config['apns']['use_sandbox'],
+        self.apns = Apns(self.logger, self.config.getboolean('apns', 'use_sandbox'),
                          self.config['apns']['cert_filename'], self.config['apns']['passphrase'], client)
 
         self.huawei = HuaWei(self.logger, self.config['huawei']['client_id'],

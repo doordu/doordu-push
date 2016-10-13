@@ -16,6 +16,7 @@ class Apns:
 
         self.logger = logger
         self.logger.info("注册APNS通道")
+        self.logger.info("cert_file: %s", cert_file)
 
         session = Session()
         self.use_sandbox = use_sandbox
@@ -95,6 +96,3 @@ class Apns:
 
 
         return {'invalid_ios_tokens': invalid_tokens}
-
-
-
