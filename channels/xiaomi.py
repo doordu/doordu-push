@@ -23,10 +23,13 @@ class XiaoMi:
             'restricted_package_name': self.package_name,
             'notify_id': 2,
             'extra.notify_foreground': 1,
-            'extra.sound_uri': 'android.resource://com.doordu.mobile/raw/ringtone_long',
+            # 'extra.sound_uri': 'android.resource://com.doordu.mobile/raw/ringtone_long',
             'extra.notify_effect': 1,
             'registration_id': ','.join(tokens)
         }
+
+        if '呼叫' in content:
+            payload['extra.sound_uri'] = 'android.resource://com.doordu.mobile/raw/ringtone_long'
 
         r = requests.post(URL, headers={'Authorization': 'key={}'.format(self.secret_key)},
                           data=payload)
