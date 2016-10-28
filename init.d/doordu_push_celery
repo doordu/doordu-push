@@ -9,7 +9,7 @@ PROG_NAME="celery"
 PRO_PATH="/usr/local/doordu-push-new"
 PRO_BIN="celery"
 PRO_PID_FILE="$PRO_PATH/${PROG_NAME}.pid"
-FORK="4"
+THREADS="8"
 
 cd $PRO_PATH
 source env/bin/activate
@@ -17,7 +17,7 @@ RETVAL=0
 
 start(){
     echo -n $"Starting $PROG_NAME: "
-    $PRO_BIN -A tasks worker --loglevel=info --concurrency=$FORK -P threads & echo $! > $PRO_PID_FILE &
+    $PRO_BIN -A tasks worker --loglevel=info --concurrency=$THREADS -P threads & echo $! > $PRO_PID_FILE &
     RETVAL=$?
 }
 stop()

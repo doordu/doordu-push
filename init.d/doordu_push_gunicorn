@@ -11,7 +11,7 @@ PRO_BIN="gunicorn"
 PRO_PID_FILE="${PRO_PATH}/${PROG_NAME}.pid"
 HOST="127.0.0.1"
 PORT="1884"
-FORK="4"
+THREADS="8"
 
 cd $PRO_PATH
 source env/bin/activate
@@ -19,7 +19,7 @@ RETVAL=0
 
 start(){
     echo -n $"Starting $PROG_NAME: "
-    $PRO_BIN main:app -w $FORK -b $HOST:$PORT & echo $! > $PRO_PID_FILE &
+    $PRO_BIN main:app -w $THREADS -b $HOST:$PORT & echo $! > $PRO_PID_FILE &
     RETVAL=$?
 }
 stop()
