@@ -10,7 +10,7 @@ class XiaoMi:
         self.package_name = package_name
         self.logger.info("开始处理小米推送")
 
-    def push(self, tokens, title, content):
+    def push(self, tokens, title, content, is_ringtone=False):
         self.logger.info("Tokens: {}".format(tokens))
         self.logger.info("Title: {}".format(title))
 
@@ -29,7 +29,7 @@ class XiaoMi:
             'registration_id': ','.join(tokens)
         }
 
-        if '呼叫' in content:
+        if is_ringtone:
             payload['extra.sound_uri'] = 'android.resource://com.doordu.mobile/raw/ringtone_long'
 
         r = requests.post(URL, headers={'Authorization': 'key={}'.format(self.secret_key)},

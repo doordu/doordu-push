@@ -84,8 +84,13 @@ class Push(Task):
 
             try:
                 if len(params['xiaomi']) > 0:
+                    is_make_call = False
+                    try:
+                        is_make_call = params['message']['cmd'] == 'makeCall'
+                    except KeyError:
+                        pass
                     futures.append(executor.submit(self.xiaomi.push, params['xiaomi'],
-                                                   params['title'], params['content']))
+                                                   params['title'], params['content'], is_make_call))
             except Exception as e:
                 client.captureException()
                 self.logger.error("抛出异常: %s", e)
