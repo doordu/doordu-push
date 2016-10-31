@@ -1,0 +1,3 @@
+
+class ExpiredException(Exception):
+    pass
