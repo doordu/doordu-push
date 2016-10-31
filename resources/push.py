@@ -36,15 +36,18 @@ class PushResource(Base):
     def on_post(self, req, resp):
         content = req.stream.read()
         params = content.decode("utf-8")
-        params = json.loads(params)
-        self.logger.info(params)
-        response = {'status_code': 200}
+        try:
+            params = json.loads(params)
+            self.logger.info(params)
+            self.push.delay(params)
+            response = {'status_code': 200}
+            self.logger.info("推送结果: %s", response)
+            resp.status = falcon.HTTP_200
+        except json.decoder.JSONDecodeError:
+            self.logger.info(params)
+            response = {'status_code': 403}
+            resp.status = falcon.HTTP_403
 
-        self.push.delay(params)
-
-        self.logger.info("推送结果: %s", response)
-
-        resp.status = falcon.HTTP_200
         resp.body = json.dumps(response)
 
 

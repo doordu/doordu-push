@@ -24,7 +24,7 @@ class MeiZu:
         params = [
             ('pushIds', ','.join(tokens)),
             ('appId', self.app_id),
-            ('messageJson', '{"advanceInfo":{"clearNoticeBar":true,"fixSpeed":false,"fixSpeedRate":0,"notificationType":{"lights":true,"sound":true,"vibrate":true},"suspend":true},"clickTypeInfo":{"activity":"","clickType":0,"url":""},"noticeBarInfo":{"content":"%(content)s","noticeBarType":0,"title":"%(title)s"},"noticeExpandInfo":{"noticeExpandContent":"%(content)s","noticeExpandType":1},"pushTimeInfo":{"offLine":false,"pushTimeType":0,"startTime":"","validTime":24}}' % {'title': title, 'content': content}),
+            ('messageJson', '{"advanceInfo":{"clearNoticeBar":true,"fixSpeed":false,"fixSpeedRate":0,"notificationType":{"lights":true,"sound":true,"vibrate":true},"suspend":true},"clickTypeInfo":{"activity":"","clickType":0,"url":""},"noticeBarInfo":{"content":"%(content)s","noticeBarType":0,"title":"%(title)s"},"noticeExpandInfo":{"noticeExpandContent":"%(content)s","noticeExpandType":1},"pushTimeInfo":{"offLine":true,"pushTimeType":0,"startTime":"","validTime":1}}' % {'title': title, 'content': content}),
         ]
 
         params.sort(key=itemgetter(0))

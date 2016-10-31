@@ -22,6 +22,7 @@ class XiaoMi:
             'notify_type': 1,
             'restricted_package_name': self.package_name,
             'notify_id': 2,
+            'time_to_live': 40000, # ms
             'extra.notify_foreground': 1,
             # 'extra.sound_uri': 'android.resource://com.doordu.mobile/raw/ringtone_long',
             'extra.notify_effect': 1,
