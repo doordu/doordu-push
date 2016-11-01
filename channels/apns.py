@@ -29,12 +29,12 @@ class Apns:
         # Send the message.
         self.srv = APNs(self.conn)
 
-    def push(self, tokens, title, sound='default', ios_remove_token_url=None, content={}):
+    def push(self, tokens, alert, sound='default', ios_remove_token_url=None, content={}):
         self.logger.info("开始APNS推送")
         self.logger.info("Tokens: %s, Sound: %s", tokens, sound)
         # New message to 3 devices. You app will show badge 10 over app's icon.
         message = Message(tokens,
-                          alert=title, badge=1, sound=sound, extra=content)
+                          alert=alert, badge=1, sound=sound, extra=content)
         invalid_tokens = []
         contain_invalid_token = False
         while tokens:

@@ -66,7 +66,7 @@ class Push(Task):
             futures = []
             try:
                 if len(params['ios']) > 0:
-                    futures.append(executor.submit(self.apns.push, params['ios'], params['title'],
+                    futures.append(executor.submit(self.apns.push, params['ios'], params['content'],
                                    params['ios_sound'] if 'ios_sound' in params else 'default',
                                    params['clear_invalid_token_url'] if 'clear_invalid_token_url' in params else None,
                                    params['message']))
