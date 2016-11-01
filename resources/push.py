@@ -29,7 +29,7 @@ class PushResource(Base):
         try:
             params = json.loads(params)
             self.logger.info(params)
-            self.push.apply_async((params, ), expires=8)
+            self.push.apply_async((params, ), expires=25)
             try:
                 expired_at = params['message']['expiredAt']
                 current_timestamp = int(time.time())
