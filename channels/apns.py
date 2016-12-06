@@ -55,8 +55,13 @@ class Apns:
                 continue
             except Exception:
                 self.logger.error("Can't connect to APNs, looks like network is down")
+                session = Session()
+                self.conn = session.get_connection("push_sandbox" if self.use_sandbox else "push_production",
+                                                   cert_file=self.cert_file, passphrase=self.passphrase)
+                # Send the message.
+                self.srv = APNs(self.conn)
                 self.raven.captureException()
-                break
+                continue
             else:
                 # Check failures. Check codes in APNs reference docs.
                 for token, reason in res.failed.items():
