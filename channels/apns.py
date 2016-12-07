@@ -1,10 +1,10 @@
 import OpenSSL
+
 OpenSSL.SSL.SSLv3_METHOD = OpenSSL.SSL.TLSv1_METHOD
 
 import os.path
 import binascii
 import json
-
 
 from apnsclient import *
 import requests
