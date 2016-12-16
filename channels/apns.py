@@ -5,6 +5,7 @@ OpenSSL.SSL.SSLv3_METHOD = OpenSSL.SSL.TLSv1_METHOD
 import os.path
 import binascii
 import json
+import time
 
 from apnsclient import *
 import requests
@@ -32,9 +33,10 @@ class Apns:
     def push(self, tokens, alert, sound='default', ios_remove_token_url=None, content={}):
         self.logger.info("开始APNS推送")
         self.logger.info("Tokens: %s, Sound: %s", tokens, sound)
-        # New message to 3 devices. You app will show badge 10 over app's icon.
+
         message = Message(tokens,
-                          alert=alert, badge=1, sound=sound, extra=content)
+                          alert=alert, badge=1, sound=sound, extra=content,
+                          expiry=content['expiredAt'] if 'expiredAt' in content else None)
         invalid_tokens = []
         contain_invalid_token = False
         while tokens:
