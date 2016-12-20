@@ -32,11 +32,12 @@ class Apns:
 
     def push(self, tokens, alert, sound='default', ios_remove_token_url=None, content={}):
         self.logger.info("开始APNS推送")
-        self.logger.info("Tokens: %s, Sound: %s", tokens, sound)
+        expiry = content['expiredAt'] if 'expiredAt' in content else None
+        self.logger.info("Tokens: %s, Sound: %s, Expiry: %s", tokens, sound, expiry)
 
         message = Message(tokens,
                           alert=alert, badge=1, sound=sound, extra=content,
-                          expiry=content['expiredAt'] if 'expiredAt' in content else None)
+                          expiry=expiry)
         invalid_tokens = []
         contain_invalid_token = False
         while tokens:
