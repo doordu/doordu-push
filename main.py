@@ -1,15 +1,18 @@
-import configparser
 import os
 
 import falcon
+import yaml
 
 from resources.push import PushResource
 from resources.online import OnlineResource
 
 app = falcon.API()
 
-config = configparser.ConfigParser()
-config.read(os.path.join(os.path.dirname(__file__), "config.ini"))
+config_file = os.path.join(os.path.dirname(__file__), "config.yaml")
+config = None
+
+with open(config_file, "r") as handle:
+    config = yaml.load(handle)
 
 push = PushResource(config)
 online = OnlineResource(config)

@@ -1,0 +1,40 @@
+general:
+  use_sandbox: true
+  
+mqtt:
+  host: 10.0.0.243
+  port: 1883
+  
+redis:
+  host: 10.0.0.243
+  port: 6379
+  auth: Doordu2015!!
+    
+a47a7898481eabf77a1a5ce061f7908b:
+  apns:
+    cert_filename: doordu
+    passphrase: doordu123456
+  huawei:
+    client_id: 10201628
+    client_secret: sv76t42d7qcashyjjz1s5hxzrubuuvvf
+  xiaomi:
+    package_name: com.doordu.mobile
+    secret_key: xJB7WtOurXuwwP4zKGdDLQ==
+  meizu:
+    app_id: 110015
+    secret_key: 1e3412be25f44814827811fed0a1ff2c
+    
+    
+707c1b60fc22378fc22d4bd51bce7616:
+  apns:
+    cert_filename: lingju
+    passphrase: lingju654321
+  huawei:
+    client_id: 10748808
+    client_secret: 0819d7a11f16f739d63152394f4d2641
+  xiaomi:
+    package_name: com.lingjulive.mobile
+    secret_key: IjY3Y6xDubozNxDdiRbRiA==
+  meizu:
+    app_id: 110170
+    secret_key: db5dc7952dd945b58e42ff4d98446237

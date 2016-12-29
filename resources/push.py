@@ -6,7 +6,7 @@ import falcon
 from redis import Redis
 
 from .base import Base
-from tasks import Push
+from tasks import DoorDuPush, LinJuPush
 from exceptions import ExpiredException, FrequentException
 
 
@@ -17,9 +17,12 @@ class PushResource(Base):
         加载各推送通道
         :return: None
         """
-        self.push = Push()
+        self.pushs = {
+            'a47a7898481eabf77a1a5ce061f7908b': DoorDuPush(),
+            '707c1b60fc22378fc22d4bd51bce7616': LinJuPush(),
+        }
         self.r = Redis(host=self.config['redis']['host'],
-                       port=self.config.getint('redis', 'port'),
+                       port=self.config['redis']['port'],
                        db=0,
                        password=self.config['redis']['auth'])
 
@@ -29,7 +32,6 @@ class PushResource(Base):
         try:
             params = json.loads(params)
             self.logger.info(params)
-            self.push.apply_async((params, ), expires=25)
             try:
                 expired_at = params['message']['expiredAt']
                 current_timestamp = int(time.time())
@@ -49,6 +51,12 @@ class PushResource(Base):
                 self.r.setex(redis_key, topic, 1)
             except KeyError:
                 pass
+
+            try:
+                app_id = params['app_id']
+                self.pushs[app_id].apply_async((params, ), expires=25)
+            except KeyError:
+                self.pushs['a47a7898481eabf77a1a5ce061f7908b'].apply_async((params,), expires=25)
 
             response = {'status_code': 200}
             self.logger.info("推送结果: %s", response)

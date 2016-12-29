@@ -15,7 +15,7 @@ from .base import Base
 class OnlineResource(Base):
     def setup(self):
         pool = redis.ConnectionPool(host=self.config['redis']['host'],
-                                    port=self.config.getint('redis', 'port'),
+                                    port=self.config['redis']['port'],
                                     db=0,
                                     password = self.config['redis']['auth'])
         self.r = redis.Redis(connection_pool=pool)
