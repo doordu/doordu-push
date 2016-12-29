@@ -56,6 +56,7 @@ class PushResource(Base):
                 app_id = params['app_id']
                 self.pushs[app_id].apply_async((params, ), expires=25)
             except KeyError:
+                self.logger.error("APP ID[%s]键值不存在!", app_id)
                 self.pushs['a47a7898481eabf77a1a5ce061f7908b'].apply_async((params,), expires=25)
 
             response = {'status_code': 200}
