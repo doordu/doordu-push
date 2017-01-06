@@ -29,7 +29,6 @@ class PushResource(Base):
         try:
             params = json.loads(params)
             self.logger.info(params)
-            self.push.apply_async((params, ), expires=25)
             try:
                 expired_at = params['message']['expiredAt']
                 current_timestamp = int(time.time())
@@ -50,6 +49,7 @@ class PushResource(Base):
             except KeyError:
                 pass
 
+            self.push.apply_async((params, ), expires=25)
             response = {'status_code': 200}
             self.logger.info("推送结果: %s", response)
             resp.status = falcon.HTTP_200
@@ -72,5 +72,3 @@ class PushResource(Base):
             resp.status = falcon.HTTP_404
 
         resp.body = json.dumps(response)
-
-
