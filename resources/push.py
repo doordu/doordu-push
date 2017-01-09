@@ -41,7 +41,8 @@ class PushResource(Base):
             try:
                 topic = params['topic']
                 cmd = params['message']['cmd']
-                redis_key = 'push_{}_{}'.format(topic, cmd)
+                transaction_id = params['message']['transactionID']
+                redis_key = 'push_{}_{}_{}'.format(topic, cmd, transaction_id)
                 if self.r.get(redis_key) is not None:
                     self.logger.info("%s topic 请求频繁", redis_key)
                     raise FrequentException()
