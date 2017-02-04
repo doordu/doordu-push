@@ -198,3 +198,85 @@ class LinJuPush(Task):
                 self.logger.error("超时异常：%s", e)
 
         return response
+
+
+class YiJiaQinPush(Task):
+
+    def __init__(self):
+        self.logger = logging.getLogger('doordu-push')
+        fh = logging.FileHandler(os.path.join(os.path.dirname(__file__),'doordu-push.log'))
+        formatter = logging.Formatter(
+            '%(asctime)s - %(name)s - %(levelname)s - %(filename)s - %(lineno)d - %(message)s')
+        fh.setLevel(logging.INFO)
+        fh.setFormatter(formatter)
+        self.logger.addHandler(fh)
+        self.logger.setLevel(logging.INFO)
+        self.config = config
+        APPID = '195715545587f05038f77a42317efb84'
+
+        self.apns = Apns(self.logger, self.config['general']['use_sandbox'],
+                         self.config[APPID]['apns']['cert_filename'],
+                         self.config[APPID]['apns']['passphrase'], client)
+
+        self.huawei = HuaWei(self.logger, self.config[APPID]['huawei']['client_id'],
+                                          self.config[APPID]['huawei']['client_secret'])
+        self.xiaomi = XiaoMi(self.logger, self.config[APPID]['xiaomi']['secret_key'],
+                                          self.config[APPID]['xiaomi']['package_name'])
+        self.meizu = MeiZu(self.logger, self.config[APPID]['meizu']['app_id'],
+                                          self.config[APPID]['meizu']['secret_key'])
+
+        self.mqtt = MQTT(self.logger, self.config['mqtt']['host'], self.config['mqtt']['port'])
+
+    def run(self, params):
+        response = {}
+        with ThreadPoolExecutor(max_workers=6) as executor:
+            futures = []
+            try:
+                if len(params['ios']) > 0:
+                    futures.append(executor.submit(self.apns.push, params['ios'], params['content'],
+                                   params['ios_sound'] if 'ios_sound' in params else 'default',
+                                   params['clear_invalid_token_url'] if 'clear_invalid_token_url' in params else None,
+                                   params['message']))
+            except Exception as e:
+                client.captureException()
+                self.logger.error("抛出异常: %s", e)
+
+            try:
+                if len(params['huawei']) > 0:
+                    futures.append(executor.submit(self.huawei.push, params['huawei'],
+                                                   params['title'], params['content']))
+            except Exception as e:
+                client.captureException()
+                self.logger.error("抛出异常: %s", e)
+
+            try:
+                if len(params['xiaomi']) > 0:
+                    is_make_call = False
+                    try:
+                        is_make_call = params['message']['cmd'] == 'makeCall'
+                    except KeyError:
+                        pass
+                    futures.append(executor.submit(self.xiaomi.push, params['xiaomi'],
+                                                   params['title'], params['content'], is_make_call))
+            except Exception as e:
+                client.captureException()
+                self.logger.error("抛出异常: %s", e)
+
+            try:
+                if len(params['meizu']) > 0:
+                    futures.append(executor.submit(self.meizu.push, params['meizu'],
+                                                   params['title'], params['content']))
+            except Exception as e:
+                client.captureException()
+                self.logger.error("抛出异常: %s", e)
+
+            futures.append(executor.submit(self.mqtt.push, params['topic'], params['qos'],
+                                           json.dumps(params['message'])))
+            try:
+                for future in as_completed(futures, timeout=10):
+                    response.update(future.result())
+            except TimeoutError as e:
+                client.captureException()
+                self.logger.error("超时异常：%s", e)
+
+        return response
