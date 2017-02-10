@@ -35,11 +35,10 @@ class MeiZu:
         params.append(('sign', sign))
 
         data = urllib.parse.urlencode(params)
-
-        r = requests.post(URL, headers=headers, data=data)
-
-        self.logger.info("魅族推送结束")
+        self.logger.info("Params: {}".data) 
+        r = requests.post(URL, headers=headers, data=data)               
         response = r.json()
-        self.logger.info(response)
+        self.logger.info("Response: {}".response)
+        self.logger.info("魅族推送结束")
 
         return {'meizu': response}
