@@ -40,5 +40,6 @@ class MeiZu:
 
         self.logger.info("魅族推送结束")
         response = r.json()
+        self.logger.info(response)
 
         return {'meizu': response}
