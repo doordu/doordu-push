@@ -34,11 +34,11 @@ class MeiZu:
         sign = hashlib.md5(sign.encode("utf-8")).hexdigest()
         params.append(('sign', sign))
 
-        data = urllib.parse.urlencode(params)
-        self.logger.info("Params: {}".data) 
-        r = requests.post(URL, headers=headers, data=data)               
+        data = urllib.parse.urlencode(params)        
+        r = requests.post(URL, headers=headers, data=data)  
+        self.logger.info("魅族推送结束")             
         response = r.json()
-        self.logger.info("Response: {}".response)
-        self.logger.info("魅族推送结束")
+        self.logger.info(data) 
+        self.logger.info(response)       
 
         return {'meizu': response}
