@@ -54,5 +54,6 @@ class HuaWei:
 
         self.logger.info("华为推送结束")
         response = json.loads(json.loads(r.text))
+        self.logger.info(response)  
 
         return {'huawei': response}
