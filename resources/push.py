@@ -30,6 +30,8 @@ class PushResource(Base):
     def on_post(self, req, resp):
         content = req.stream.read()
         message = content.decode("utf-8")
+        response = {}
+        
         try:
             message = json.loads(message)
             self.logger.info(message)
