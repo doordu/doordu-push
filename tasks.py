@@ -106,8 +106,9 @@ class DoorDuPush(Task):
                 client.captureException()
                 self.logger.error("抛出异常: %s", e)
 
-            futures.append(executor.submit(self.mqtt.push, params['topic'], params['qos'],
-                                           json.dumps(params['message'])))
+            if 'topic' in params:
+                futures.append(executor.submit(self.mqtt.push, params['topic'], params['qos'],
+                                               json.dumps(params['message'])))
             try:
                 for future in as_completed(futures, timeout=10):
                     response.update(future.result())
@@ -188,8 +189,9 @@ class LinJuPush(Task):
                 client.captureException()
                 self.logger.error("抛出异常: %s", e)
 
-            futures.append(executor.submit(self.mqtt.push, params['topic'], params['qos'],
-                                           json.dumps(params['message'])))
+            if 'topic' in params:
+                futures.append(executor.submit(self.mqtt.push, params['topic'], params['qos'],
+                                               json.dumps(params['message'])))
             try:
                 for future in as_completed(futures, timeout=10):
                     response.update(future.result())
