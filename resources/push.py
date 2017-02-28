@@ -6,7 +6,7 @@ import falcon
 from redis import Redis
 
 from .base import Base
-from tasks import DoorDuPush, LinJuPush, YiJiaQinPush
+from tasks import DoorDuPush, LinJuPush, YiJiaQinPush, BanShengHuo
 from exceptions import ExpiredException, FrequentException
 
 
@@ -21,6 +21,7 @@ class PushResource(Base):
             'a47a7898481eabf77a1a5ce061f7908b': DoorDuPush(),
             '707c1b60fc22378fc22d4bd51bce7616': LinJuPush(),
             '195715545587f05038f77a42317efb84': YiJiaQinPush(),
+            'banshenghuo': BanShengHuo(),
         }
         self.r = Redis(host=self.config['redis']['host'],
                        port=self.config['redis']['port'],
