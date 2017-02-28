@@ -53,3 +53,17 @@ a47a7898481eabf77a1a5ce061f7908b:
   meizu:
     app_id: 110231
     secret_key: d5085a0c28be4ce59678847d90c55e59
+
+banshenghuo:
+  apns:
+    cert_filename: banshenghuo
+    passphrase: banshenghuo123
+  huawei:
+    client_id: 10746637
+    client_secret: 9788943d64c57292f196e797d19f253b
+  xiaomi:
+    package_name: com.banshenghuo.mobile
+    secret_key: U/GAxT5BOOMdCwkGFQYrKA==
+  meizu:
+    app_id: 110272
+    secret_key: 132c402b651741e48b5385722fd18aa0
