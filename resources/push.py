@@ -29,42 +29,43 @@ class PushResource(Base):
 
     def on_post(self, req, resp):
         content = req.stream.read()
-        params = content.decode("utf-8")
+        message = content.decode("utf-8")
         try:
-            params = json.loads(params)
-            self.logger.info(params)
-            try:
-                expired_at = params['message']['expiredAt']
-                current_timestamp = int(time.time())
-                if current_timestamp > expired_at:
-                    self.logger.info("已经过期!")
-                    raise ExpiredException()
-            except KeyError:
-                pass
+            message = json.loads(message)
+            self.logger.info(message)
+            if not isinstance(message, list):
+                message = [message, ]
 
-            try:
-                topic = params['topic']
-                cmd = params['message']['cmd']
-                transaction_id = params['message']['transactionID']
-                redis_key = 'push_{}_{}_{}'.format(topic, cmd, transaction_id)
-                if self.r.get(redis_key) is not None:
-                    self.logger.info("%s topic 请求频繁", redis_key)
-                    raise FrequentException()
-                self.r.setex(redis_key, topic, 1)
-            except KeyError:
-                pass
+            for params in message:
+                try:
+                    expired_at = params['message']['expiredAt']
+                    current_timestamp = int(time.time())
+                    if current_timestamp > expired_at:
+                        self.logger.info("已经过期!")
+                        raise ExpiredException()
+                except KeyError:
+                    pass
 
-            try:
-                app_id = params['app_id']
-                self.pushs[app_id].apply_async((params, ), expires=25)
-            except KeyError:
-                self.pushs['a47a7898481eabf77a1a5ce061f7908b'].apply_async((params,), expires=25)
+                try:
+                    topic = params['topic']
+                    cmd = params['message']['cmd']
+                    transaction_id = params['message']['transactionID']
+                    redis_key = 'push_{}_{}_{}'.format(topic, cmd, transaction_id)
+                    if self.r.get(redis_key) is not None:
+                        self.logger.info("%s topic 请求频繁", redis_key)
+                        raise FrequentException()
+                    self.r.setex(redis_key, topic, 1)
+                except KeyError:
+                    pass
 
-            response = {'status_code': 200}
-            self.logger.info("推送结果: %s", response)
+                try:
+                    app_id = params['app_id']
+                    self.pushs[app_id].apply_async((params, ), expires=25)
+                except KeyError:
+                    self.pushs['a47a7898481eabf77a1a5ce061f7908b'].apply_async((params,), expires=25)
+
             resp.status = falcon.HTTP_200
         except ValueError:
-            self.logger.info(params)
             self.logger.info(traceback.format_exc())
             response = {'status_code': 403, 'msg': "数据格式不正确"}
             resp.status = falcon.HTTP_403
