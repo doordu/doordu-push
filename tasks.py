@@ -298,6 +298,8 @@ class BanShengHuo(Task):
         self.logger.setLevel(logging.INFO)
         self.config = config
         APPID = 'banshenghuo'
+        self.logger.info("APPID: %s", APPID)
+
 
         self.apns = Apns(self.logger, self.config['general']['use_sandbox'],
                          self.config[APPID]['apns']['cert_filename'],
@@ -314,6 +316,7 @@ class BanShengHuo(Task):
 
     def run(self, params):
         response = {}
+        self.logger.info("Parameters: %s", params)
         with ThreadPoolExecutor(max_workers=6) as executor:
             futures = []
             try:
