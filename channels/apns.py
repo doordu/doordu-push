@@ -19,10 +19,10 @@ class Apns:
         self.logger.info("注册APNS通道")
         self.logger.info("cert_file: %s", cert_file)
 
-        mes
+        session = Session()
         self.use_sandbox = use_sandbox
         self.cert_filename = cert_filename
-        self.cert_file = cert_filesr
+        self.cert_file = cert_file
         self.passphrase = passphrase
         self.raven = raven
         self.conn = session.get_connection("push_sandbox" if use_sandbox else "push_production",
