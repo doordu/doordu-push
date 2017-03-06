@@ -298,7 +298,6 @@ class BanShengHuo(Task):
         self.logger.setLevel(logging.INFO)
         self.config = config
         APPID = 'banshenghuo'
-        self.logger.info("APPID: %s", APPID)
 
 
         self.apns = Apns(self.logger, self.config['general']['use_sandbox'],

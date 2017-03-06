@@ -19,10 +19,10 @@ class Apns:
         self.logger.info("注册APNS通道")
         self.logger.info("cert_file: %s", cert_file)
 
-        session = Session()
+        mes
         self.use_sandbox = use_sandbox
         self.cert_filename = cert_filename
-        self.cert_file = cert_file
+        self.cert_file = cert_filesr
         self.passphrase = passphrase
         self.raven = raven
         self.conn = session.get_connection("push_sandbox" if use_sandbox else "push_production",
@@ -34,6 +34,7 @@ class Apns:
         self.logger.info("开始APNS推送")
         expiry = content['expiredAt'] if 'expiredAt' in content else None
         self.logger.info("Tokens: %s, Sound: %s, Expiry: %s", tokens, sound, expiry)
+        self.logger.info("Alert: %s, Extra: %s", alert, content)
 
         message = Message(tokens,
                           alert=alert, badge=1, sound=sound, extra=content,
@@ -101,6 +102,5 @@ class Apns:
                 requests.delete(ios_remove_token_url, data=payload, headers={'Content-Type': 'application/json'})
             except Exception:
                 pass
-
 
         return {'invalid_ios_tokens': invalid_tokens}
