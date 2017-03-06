@@ -37,8 +37,7 @@ class Apns:
         self.logger.info("Alert: %s, Extra: %s", alert, content)
 
         message = Message(tokens,
-                          alert=alert, badge=1, sound=sound, extra=content,
-                          expiry=expiry)
+                          alert=alert, badge=1, sound=sound, expiry=expiry)
         invalid_tokens = []
         contain_invalid_token = False
         while tokens:
