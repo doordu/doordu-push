@@ -1,12 +1,10 @@
-from apns2.client import APNsClient, Notification
-from apns2.payload import Payload
-
 import os.path
 import json
 import time
 
-from apnsclient import *
-import requests
+from apns2.client import APNsClient, Notification
+from apns2.payload import Payload
+
 
 class Apns:
     def __init__(self, logger, use_sandbox, cert_filename, passphrase, raven):
@@ -17,18 +15,13 @@ class Apns:
         self.logger.info("注册APNS通道")
         self.logger.info("cert_file: %s", cert_file)
 
-        session = Session()
         self.use_sandbox = use_sandbox
         self.cert_filename = cert_filename
         self.cert_file = cert_file
         self.passphrase = passphrase
         self.raven = raven
-        self.conn = session.get_connection("push_sandbox" if use_sandbox else "push_production",
-                                            cert_file=cert_file, passphrase=passphrase)
-        # Send the message.
-        self.srv = APNs(self.conn)
 
-        self.client = APNsClient(cert_file, use_sandbox=use_sandbox)
+        self.client = APNsClient(self.cert_file, use_sandbox=self.use_sandbox)
 
     def push(self, tokens, alert, sound='default', ios_remove_token_url=None, content={}):
         self.logger.info("开始APNS推送")
@@ -44,6 +37,8 @@ class Apns:
         try:
             self.client.send_notification_batch(notifications, 'com.doordu.mobile')
         except Exception as e:
+            self.logger.info("APNS 抛出异常: %s", e)
             self.raven.captureException()
+            self.client = APNsClient(self.cert_file, use_sandbox=self.use_sandbox)
 
         return {'invalid_ios_tokens': invalid_tokens}
