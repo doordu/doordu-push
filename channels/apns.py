@@ -1,9 +1,7 @@
-import OpenSSL
-
-OpenSSL.SSL.SSLv3_METHOD = OpenSSL.SSL.TLSv1_METHOD
+from apns2.client import APNsClient, Notification
+from apns2.payload import Payload
 
 import os.path
-import binascii
 import json
 import time
 
@@ -30,76 +28,22 @@ class Apns:
         # Send the message.
         self.srv = APNs(self.conn)
 
+        self.client = APNsClient(cert_file, use_sandbox=use_sandbox)
+
     def push(self, tokens, alert, sound='default', ios_remove_token_url=None, content={}):
         self.logger.info("开始APNS推送")
         expiry = content['expiredAt'] if 'expiredAt' in content else None
         self.logger.info("Tokens: %s, Sound: %s, Expiry: %s", tokens, sound, expiry)
         self.logger.info("Alert: %s, Extra: %s", alert, content)
 
-        message = Message(tokens,
-                          alert=alert, badge=1, sound=sound, expiry=expiry)
         invalid_tokens = []
-        contain_invalid_token = False
-        while tokens:
-            try:
-                res = self.srv.send(message)
-            except binascii.Error:
-                self.logger.error("Token有误！")
-                self.raven.captureMessage("Token有误! {}".format(tokens))
-                break
-            except OpenSSL.SSL.SysCallError:
-                self.logger.error("SSL握手失败，重新尝试连接")
-                session = Session()
-                self.conn = session.get_connection("push_sandbox" if self.use_sandbox else "push_production",
-                                                   cert_file=self.cert_file, passphrase=self.passphrase)
-                # Send the message.
-                self.srv = APNs(self.conn)
-                self.raven.captureException()
-                continue
-            except Exception:
-                self.logger.error("Can't connect to APNs, looks like network is down")
-                session = Session()
-                self.conn = session.get_connection("push_sandbox" if self.use_sandbox else "push_production",
-                                                   cert_file=self.cert_file, passphrase=self.passphrase)
-                # Send the message.
-                self.srv = APNs(self.conn)
-                self.raven.captureException()
-                continue
-            else:
-                # Check failures. Check codes in APNs reference docs.
-                for token, reason in res.failed.items():
-                    code, errmsg = reason
-                    # according to APNs protocol the token reported here
-                    # is garbage (invalid or empty), stop using and remove it.
-                    self.logger.error("Device failed: {0}, reason: {1}".format(token, errmsg))
-                    if code == 8:
-                        tokens.remove(token)
-                        invalid_tokens.append(token)
-                        contain_invalid_token = True
 
-                # Check failures not related to devices.
-                for code, errmsg in res.errors:
-                    self.logger.error("Error: {}".format(errmsg))
+        payload = Payload(alert=alert, sound=sound, badge=1)
+        notifications = (Notification(token=token, payload=payload) for token in tokens)
 
-                if contain_invalid_token:
-                    contain_invalid_token = False
-                    continue
-
-                # Check if there are tokens that can be retried
-                if res.needs_retry():
-                    # repeat with retry_message or reschedule your task
-                    retry_message = res.retry()
-
-                break
-
-        self.logger.info("APNS推送结束")
-
-        if invalid_tokens and ios_remove_token_url:
-            self.logger.info("Invalid tokens: %s", invalid_tokens)
-            payload = json.dumps({'invalid_tokens': invalid_tokens})
-            try:
-                requests.delete(ios_remove_token_url, data=payload, headers={'Content-Type': 'application/json'})
-            except Exception:
-                pass
+        try:
+            self.client.send_notification_batch(notifications, 'com.doordu.mobile')
+        except Exception as e:
+            self.raven.captureException()
 
         return {'invalid_ios_tokens': invalid_tokens}
