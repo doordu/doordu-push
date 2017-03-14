@@ -52,7 +52,9 @@ class DoorDuPush(Task):
 
         self.apns = Apns(self.logger, self.config['general']['use_sandbox'],
                          self.config[APPID]['apns']['cert_filename'],
-                         self.config[APPID]['apns']['passphrase'], client)
+                         self.config[APPID]['apns']['passphrase'],
+                         self.config[APPID]['apns']['bundle_id'],
+                         client)
 
         self.huawei = HuaWei(self.logger, self.config[APPID]['huawei']['client_id'],
                                           self.config[APPID]['huawei']['client_secret'])
@@ -135,7 +137,9 @@ class LinJuPush(Task):
 
         self.apns = Apns(self.logger, self.config['general']['use_sandbox'],
                          self.config[APPID]['apns']['cert_filename'],
-                         self.config[APPID]['apns']['passphrase'], client)
+                         self.config[APPID]['apns']['passphrase'],
+                         self.config[APPID]['apns']['bundle_id'],
+                         client)
 
         self.huawei = HuaWei(self.logger, self.config[APPID]['huawei']['client_id'],
                                           self.config[APPID]['huawei']['client_secret'])
@@ -218,7 +222,9 @@ class YiJiaQinPush(Task):
 
         self.apns = Apns(self.logger, self.config['general']['use_sandbox'],
                          self.config[APPID]['apns']['cert_filename'],
-                         self.config[APPID]['apns']['passphrase'], client)
+                         self.config[APPID]['apns']['passphrase'],
+                         self.config[APPID]['apns']['bundle_id'],
+                         client)
 
         self.huawei = HuaWei(self.logger, self.config[APPID]['huawei']['client_id'],
                                           self.config[APPID]['huawei']['client_secret'])
@@ -302,7 +308,9 @@ class BanShengHuo(Task):
 
         self.apns = Apns(self.logger, self.config['general']['use_sandbox'],
                          self.config[APPID]['apns']['cert_filename'],
-                         self.config[APPID]['apns']['passphrase'], client)
+                         self.config[APPID]['apns']['passphrase'],
+                         self.config[APPID]['apns']['bundle_id'],
+                         client)
 
         self.huawei = HuaWei(self.logger, self.config[APPID]['huawei']['client_id'],
                                           self.config[APPID]['huawei']['client_secret'])

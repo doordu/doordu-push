@@ -7,7 +7,7 @@ from apns2.payload import Payload
 
 
 class Apns:
-    def __init__(self, logger, use_sandbox, cert_filename, passphrase, raven):
+    def __init__(self, logger, use_sandbox, cert_filename, passphrase, bundle_id, raven):
         cert_file = os.path.join(os.path.dirname(__file__), os.path.pardir,
                     'certs', '{}_{}.pem'.format(cert_filename, 'dev' if use_sandbox else 'pro'))
 
@@ -18,10 +18,11 @@ class Apns:
         self.use_sandbox = use_sandbox
         self.cert_filename = cert_filename
         self.cert_file = cert_file
+        self.bundle_id = bundle_id
         self.passphrase = passphrase
         self.raven = raven
 
-        self.client = APNsClient(self.cert_file, use_sandbox=self.use_sandbox)
+        self.client = APNsClient(self.cert_file, use_sandbox=self.use_sandbox, password=self.passphrase)
 
     def push(self, tokens, alert, sound='default', ios_remove_token_url=None, content={}):
         self.logger.info("开始APNS推送")
@@ -35,10 +36,10 @@ class Apns:
         notifications = (Notification(token=token, payload=payload) for token in tokens)
 
         try:
-            self.client.send_notification_batch(notifications, 'com.doordu.mobile')
+            self.client.send_notification_batch(notifications, self.bundle_id)
         except Exception as e:
             self.logger.info("APNS 抛出异常: %s", e)
             self.raven.captureException()
-            self.client = APNsClient(self.cert_file, use_sandbox=self.use_sandbox)
+            self.client = APNsClient(self.cert_file, use_sandbox=self.use_sandbox, password=self.passphrase)
 
         return {'invalid_ios_tokens': invalid_tokens}

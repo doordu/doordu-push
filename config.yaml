@@ -14,6 +14,7 @@ a47a7898481eabf77a1a5ce061f7908b:
   apns:
     cert_filename: doordu
     passphrase: doordu123456
+    bundle_id: com.doordu.doordushijie
   huawei:
     client_id: 10201628
     client_secret: sv76t42d7qcashyjjz1s5hxzrubuuvvf
@@ -29,6 +30,7 @@ a47a7898481eabf77a1a5ce061f7908b:
   apns:
     cert_filename: lingju
     passphrase: lingju654321
+    bundle_id: com.doordu.doordushijie
   huawei:
     client_id: 10748808
     client_secret: 0819d7a11f16f739d63152394f4d2641
@@ -44,6 +46,7 @@ a47a7898481eabf77a1a5ce061f7908b:
   apns:
     cert_filename: yijiaqin
     passphrase: Doordu123456
+    bundle_id: com.doordu.doordushijie
   huawei:
     client_id: 10803759
     client_secret: f1e48560099e705c251c1e4947cdad79
@@ -58,6 +61,7 @@ banshenghuo:
   apns:
     cert_filename: banshenghuo
     passphrase: banshenghuo123
+    bundle_id: com.banshenghuo.banshenghuo
   huawei:
     client_id: 10746637
     client_secret: 9788943d64c57292f196e797d19f253b
