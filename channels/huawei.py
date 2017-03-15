@@ -3,6 +3,7 @@ import json
 import datetime
 
 import requests
+from requests.exceptions import ConnectTimeout
 
 
 class HuaWei:
@@ -41,19 +42,24 @@ class HuaWei:
         send_time = datetime.datetime.fromtimestamp(current_timestamp, datetime.timezone.utc).astimezone().isoformat()
         expire_time = datetime.datetime.fromtimestamp(current_timestamp + 40, datetime.timezone.utc).astimezone().isoformat()
 
-        r = requests.post("https://api.vmall.com/rest.php", data={
-            'push_type': 1,
-            'access_token': self.access_token,
-            'tokens': ','.join(tokens),
-            'android': json.dumps(message),
-            'nsp_svc': 'openpush.openapi.notification_send',
-            'nsp_ts': current_timestamp + 3 * 60 * 60 * 1000,
-            'send_time': send_time,
-            'expire_time': expire_time,
-        })
+        response = ''
 
-        self.logger.info("华为推送结束")
-        response = json.loads(json.loads(r.text))
-        self.logger.info(response)  
+        try:
+            r = requests.post("https://api.vmall.com/rest.php", data={
+                'push_type': 1,
+                'access_token': self.access_token,
+                'tokens': ','.join(tokens),
+                'android': json.dumps(message),
+                'nsp_svc': 'openpush.openapi.notification_send',
+                'nsp_ts': current_timestamp + 3 * 60 * 60 * 1000,
+                'send_time': send_time,
+                'expire_time': expire_time,
+            }, timeout=10)
+
+            self.logger.info("华为推送结束")
+            response = json.loads(json.loads(r.text))
+            self.logger.info(response)
+        except ConnectTimeout:
+            self.logger.info("华为推送超时")
 
         return {'huawei': response}

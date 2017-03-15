@@ -3,6 +3,7 @@ import hashlib
 from operator import itemgetter
 
 import requests
+from requests.exceptions import ConnectTimeout
 
 URL = "http://api-push.meizu.com/garcia/api/server/push/varnished/pushByPushId"
 
@@ -36,12 +37,16 @@ class MeiZu:
 
         data = urllib.parse.urlencode(params)
 
-        r = requests.post(URL, headers=headers, data=data)
+        response = ""
 
-        self.logger.info("魅族推送结束")
-        response = r.json()
+        try:
+            r = requests.post(URL, headers=headers, data=data)
 
-        self.logger.info(data) 
-        self.logger.info(response)  
+            self.logger.info("魅族推送结束")
+            response = r.json()
+
+            self.logger.info(response)
+        except ConnectTimeout:
+            self.logger.info("魅族推送超时")
 
         return {'meizu': response}

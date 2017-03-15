@@ -1,4 +1,5 @@
 import requests
+from requests.exceptions import ConnectTimeout
 
 URL = 'https://api.xmpush.xiaomi.com/v3/message/regid'
 
@@ -32,11 +33,15 @@ class XiaoMi:
         if is_ringtone:
             payload['extra.sound_uri'] = 'android.resource://com.doordu.mobile/raw/ringtone_long'
 
-        r = requests.post(URL, headers={'Authorization': 'key={}'.format(self.secret_key)},
-                          data=payload)
+        response = ""
+        try:
+            r = requests.post(URL, headers={'Authorization': 'key={}'.format(self.secret_key)},
+                              data=payload, timeout=10)
 
-        self.logger.info("小米推送结束")
-        response = r.json()
-        self.logger.info(response)
+            self.logger.info("小米推送结束")
+            response = r.json()
+            self.logger.info(response)
+        except ConnectTimeout:
+            self.logger.info("小米推送异常")
 
         return {'xiaomi': response}
