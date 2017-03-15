@@ -42,4 +42,6 @@ class Apns:
             self.raven.captureException()
             self.client = APNsClient(self.cert_file, use_sandbox=self.use_sandbox, password=self.passphrase)
 
+        self.logger.info("APNS 推送结束！")
+
         return {'invalid_ios_tokens': invalid_tokens}
