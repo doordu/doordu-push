@@ -35,8 +35,8 @@ class Apns:
         notifications = (Notification(token=token, payload=payload) for token in tokens)
 
         try:
-            self.client = APNsClient(self.cert_file, use_sandbox=self.use_sandbox, password=self.passphrase)
-            self.client.send_notification_batch(notifications, self.bundle_id)
+            client = APNsClient(self.cert_file, use_sandbox=self.use_sandbox, password=self.passphrase)
+            client.send_notification_batch(notifications, self.bundle_id)
         except Exception as e:
             self.logger.info("APNS 抛出异常: %s", traceback.format_exc())
             self.raven.captureException()
