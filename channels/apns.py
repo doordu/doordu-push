@@ -23,8 +23,6 @@ class Apns:
         self.passphrase = passphrase
         self.raven = raven
 
-        self.client = APNsClient(self.cert_file, use_sandbox=self.use_sandbox, password=self.passphrase)
-
     def push(self, tokens, alert, sound='default', ios_remove_token_url=None, content={}):
         self.logger.info("开始APNS推送")
         expiry = content['expiredAt'] if 'expiredAt' in content else None
@@ -37,11 +35,11 @@ class Apns:
         notifications = (Notification(token=token, payload=payload) for token in tokens)
 
         try:
+            self.client = APNsClient(self.cert_file, use_sandbox=self.use_sandbox, password=self.passphrase)
             self.client.send_notification_batch(notifications, self.bundle_id)
         except Exception as e:
             self.logger.info("APNS 抛出异常: %s", traceback.format_exc())
             self.raven.captureException()
-            self.client = APNsClient(self.cert_file, use_sandbox=self.use_sandbox, password=self.passphrase)
 
         self.logger.info("APNS 推送结束！")
 
