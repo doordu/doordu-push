@@ -1,6 +1,7 @@
 import os.path
 import json
 import time
+import traceback
 
 from apns2.client import APNsClient, Notification
 from apns2.payload import Payload
@@ -32,13 +33,13 @@ class Apns:
 
         invalid_tokens = []
 
-        payload = Payload(alert=alert, sound=sound, badge=1)
+        payload = Payload(alert=alert, sound=sound, badge=1, custom=content)
         notifications = (Notification(token=token, payload=payload) for token in tokens)
 
         try:
             self.client.send_notification_batch(notifications, self.bundle_id)
         except Exception as e:
-            self.logger.info("APNS 抛出异常: %s", e)
+            self.logger.info("APNS 抛出异常: %s", traceback.format_exc())
             self.raven.captureException()
             self.client = APNsClient(self.cert_file, use_sandbox=self.use_sandbox, password=self.passphrase)
 
