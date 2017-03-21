@@ -112,7 +112,7 @@ class DoorDuPush(Task):
                 futures.append(executor.submit(self.mqtt.push, params['topic'], params['qos'],
                                                json.dumps(params['message'])))
             try:
-                for future in as_completed(futures, timeout=10):
+                for future in as_completed(futures):
                     response.update(future.result())
             except TimeoutError as e:
                 client.captureException()
@@ -282,7 +282,7 @@ class YiJiaQinPush(Task):
                 futures.append(executor.submit(self.mqtt.push, params['topic'], params['qos'],
                                                json.dumps(params['message'])))
             try:
-                for future in as_completed(futures, timeout=10):
+                for future in as_completed(futures):
                     response.update(future.result())
             except TimeoutError as e:
                 client.captureException()
