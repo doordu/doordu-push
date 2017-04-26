@@ -13,7 +13,7 @@ redis:
 a47a7898481eabf77a1a5ce061f7908b:
   apns:
     cert_filename: doordu
-    passphrase: doordu123456
+    passphrase: 123456
     bundle_id: com.doordu.doordushijie
   huawei:
     client_id: 10201628
@@ -56,6 +56,23 @@ a47a7898481eabf77a1a5ce061f7908b:
   meizu:
     app_id: 110231
     secret_key: d5085a0c28be4ce59678847d90c55e59
+
+
+e6mdd6w5mpux6gx1vslq61riowe0mgk1:
+  apns:
+    cert_filename: doordusdk
+    passphrase: 123456
+    bundle_id: com.doordu.doordusdk
+  huawei:
+    client_id: 10746637
+    client_secret: 9788943d64c57292f196e797d19f253b
+  xiaomi:
+    package_name: com.banshenghuo.mobile
+    secret_key: U/GAxT5BOOMdCwkGFQYrKA==
+  meizu:
+    app_id: 110272
+    secret_key: 132c402b651741e48b5385722fd18aa0
+
 
 banshenghuo:
   apns:
