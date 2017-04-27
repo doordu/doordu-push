@@ -20,7 +20,7 @@ config = None
 with open(config_file, "r") as handle:
     config = yaml.load(handle)
 
-client = Client('https://fa6faa5cea834cbd9cfc404fb72de7aa:6b9ac91556d8405da3bf1f75e20e4239@sentry.io/104967')
+client = Client('https://97d0be6069704601a8000b2a95a1298b:2eaf1284edc04ef3b15d859d36919845@sdlog.doordu.com:8205/14')
 
 BROKER_URL = 'redis://:{}@{}:{}/0'.format(config['redis']['auth'], config['redis']['host'], config['redis']['port'])
 
@@ -391,7 +391,7 @@ class Police(Task):
         self.logger.setLevel(logging.INFO)
         self.config = config
         APPID = 'police'
-
+        print(self.config[APPID]['apns']['passphrase'])
 
         self.apns = Apns(self.logger, self.config['general']['use_sandbox'],
                          self.config[APPID]['apns']['cert_filename'],
