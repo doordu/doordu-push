@@ -69,6 +69,7 @@ class PushResource(Base):
 
             resp.status = falcon.HTTP_200
         except ValueError:
+            self.logger.info(params)
             self.logger.info(traceback.format_exc())
             response = {'status_code': 403, 'msg': "数据格式不正确"}
             resp.status = falcon.HTTP_403
