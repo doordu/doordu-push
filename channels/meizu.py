@@ -1,5 +1,6 @@
 import urllib.parse
 import hashlib
+import logging
 from operator import itemgetter
 
 import requests
@@ -9,15 +10,14 @@ URL = "http://api-push.meizu.com/garcia/api/server/push/varnished/pushByPushId"
 
 
 class MeiZu:
-    def __init__(self, logger, app_id, secret_key):
-        self.logger = logger
+    def __init__(self, app_id, secret_key):
         self.app_id = app_id
         self.secret_key = secret_key
-        self.logger.info("开始处理魅族推送")
+        logging.info("开始处理魅族推送")
 
     def push(self, tokens, title, content):
-        self.logger.info("Tokens: {}".format(tokens))
-        self.logger.info("Title: {}".format(title))
+        logging.info("Tokens: {}".format(tokens))
+        logging.info("Title: {}".format(title))
 
         headers = {
             "Content-Type": "application/x-www-form-urlencoded",
@@ -42,11 +42,11 @@ class MeiZu:
         try:
             r = requests.post(URL, headers=headers, data=data)
 
-            self.logger.info("魅族推送结束")
+            logging.info("魅族推送结束")
             response = r.json()
 
-            self.logger.info(response)
+            logging.info(response)
         except ConnectTimeout:
-            self.logger.info("魅族推送超时")
+            logging.info("魅族推送超时")
 
         return {'meizu': response}

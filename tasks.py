@@ -13,6 +13,9 @@ from channels.xiaomi import XiaoMi
 from channels.meizu import MeiZu
 from channels.mqtt import MQTT
 
+logging.basicConfig(filename=os.path.join(os.path.dirname(__file__), 'doordu-push.log'),
+                    level=logging.INFO,
+                    format='%(asctime)s - %(name)s - %(levelname)s - %(filename)s - %(lineno)d - %(message)s')
 
 config_file = os.path.join(os.path.dirname(__file__), "config.yaml")
 config = None
@@ -39,31 +42,23 @@ app.conf.update(
 class DoorDuPush(Task):
 
     def __init__(self):
-        self.logger = logging.getLogger('doordu-push')
-        fh = logging.FileHandler(os.path.join(os.path.dirname(__file__),'doordu-push.log'))
-        formatter = logging.Formatter(
-            '%(asctime)s - %(name)s - %(levelname)s - %(filename)s - %(lineno)d - %(message)s')
-        fh.setLevel(logging.INFO)
-        fh.setFormatter(formatter)
-        self.logger.addHandler(fh)
-        self.logger.setLevel(logging.INFO)
         self.config = config
         APPID = 'a47a7898481eabf77a1a5ce061f7908b'
 
-        self.apns = Apns(self.logger, self.config['general']['use_sandbox'],
+        self.apns = Apns(self.config['general']['use_sandbox'],
                          self.config[APPID]['apns']['cert_filename'],
                          self.config[APPID]['apns']['passphrase'],
                          self.config[APPID]['apns']['bundle_id'],
                          client)
 
-        self.huawei = HuaWei(self.logger, self.config[APPID]['huawei']['client_id'],
+        self.huawei = HuaWei(self.config[APPID]['huawei']['client_id'],
                                           self.config[APPID]['huawei']['client_secret'])
-        self.xiaomi = XiaoMi(self.logger, self.config[APPID]['xiaomi']['secret_key'],
+        self.xiaomi = XiaoMi(self.config[APPID]['xiaomi']['secret_key'],
                                           self.config[APPID]['xiaomi']['package_name'])
-        self.meizu = MeiZu(self.logger, self.config[APPID]['meizu']['app_id'],
+        self.meizu = MeiZu(self.config[APPID]['meizu']['app_id'],
                                           self.config[APPID]['meizu']['secret_key'])
 
-        self.mqtt = MQTT(self.logger, self.config['mqtt']['host'], self.config['mqtt']['port'])
+        self.mqtt = MQTT(self.config['mqtt']['host'], self.config['mqtt']['port'])
 
     def run(self, params):
         response = {}
@@ -77,7 +72,7 @@ class DoorDuPush(Task):
                                    params['message']))
             except Exception as e:
                 client.captureException()
-                self.logger.error("抛出异常: %s", e)
+                logging.error("抛出异常: %s", e)
 
             try:
                 if len(params['huawei']) > 0:
@@ -85,7 +80,7 @@ class DoorDuPush(Task):
                                                    params['title'], params['content']))
             except Exception as e:
                 client.captureException()
-                self.logger.error("抛出异常: %s", e)
+                logging.error("抛出异常: %s", e)
 
             try:
                 if len(params['xiaomi']) > 0:
@@ -98,7 +93,7 @@ class DoorDuPush(Task):
                                                    params['title'], params['content'], is_make_call))
             except Exception as e:
                 client.captureException()
-                self.logger.error("抛出异常: %s", e)
+                logging.error("抛出异常: %s", e)
 
             try:
                 if len(params['meizu']) > 0:
@@ -106,7 +101,7 @@ class DoorDuPush(Task):
                                                    params['title'], params['content']))
             except Exception as e:
                 client.captureException()
-                self.logger.error("抛出异常: %s", e)
+                logging.error("抛出异常: %s", e)
 
             if 'topic' in params:
                 futures.append(executor.submit(self.mqtt.push, params['topic'], params['qos'],
@@ -116,7 +111,7 @@ class DoorDuPush(Task):
                     response.update(future.result())
             except TimeoutError as e:
                 client.captureException()
-                self.logger.error("超时异常：%s", e)
+                logging.error("超时异常：%s", e)
 
         return response
 
@@ -124,31 +119,23 @@ class DoorDuPush(Task):
 class LinJuPush(Task):
 
     def __init__(self):
-        self.logger = logging.getLogger('doordu-push')
-        fh = logging.FileHandler(os.path.join(os.path.dirname(__file__),'doordu-push.log'))
-        formatter = logging.Formatter(
-            '%(asctime)s - %(name)s - %(levelname)s - %(filename)s - %(lineno)d - %(message)s')
-        fh.setLevel(logging.INFO)
-        fh.setFormatter(formatter)
-        self.logger.addHandler(fh)
-        self.logger.setLevel(logging.INFO)
         self.config = config
         APPID = '707c1b60fc22378fc22d4bd51bce7616'
 
-        self.apns = Apns(self.logger, self.config['general']['use_sandbox'],
+        self.apns = Apns(self.config['general']['use_sandbox'],
                          self.config[APPID]['apns']['cert_filename'],
                          self.config[APPID]['apns']['passphrase'],
                          self.config[APPID]['apns']['bundle_id'],
                          client)
 
-        self.huawei = HuaWei(self.logger, self.config[APPID]['huawei']['client_id'],
+        self.huawei = HuaWei(self.config[APPID]['huawei']['client_id'],
                                           self.config[APPID]['huawei']['client_secret'])
-        self.xiaomi = XiaoMi(self.logger, self.config[APPID]['xiaomi']['secret_key'],
+        self.xiaomi = XiaoMi(self.config[APPID]['xiaomi']['secret_key'],
                                           self.config[APPID]['xiaomi']['package_name'])
-        self.meizu = MeiZu(self.logger, self.config[APPID]['meizu']['app_id'],
+        self.meizu = MeiZu(self.config[APPID]['meizu']['app_id'],
                                           self.config[APPID]['meizu']['secret_key'])
 
-        self.mqtt = MQTT(self.logger, self.config['mqtt']['host'], self.config['mqtt']['port'])
+        self.mqtt = MQTT(self.config['mqtt']['host'], self.config['mqtt']['port'])
 
     def run(self, params):
         response = {}
@@ -162,7 +149,7 @@ class LinJuPush(Task):
                                    params['message']))
             except Exception as e:
                 client.captureException()
-                self.logger.error("抛出异常: %s", e)
+                logging.error("抛出异常: %s", e)
 
             try:
                 if len(params['huawei']) > 0:
@@ -170,7 +157,7 @@ class LinJuPush(Task):
                                                    params['title'], params['content']))
             except Exception as e:
                 client.captureException()
-                self.logger.error("抛出异常: %s", e)
+                logging.error("抛出异常: %s", e)
 
             try:
                 if len(params['xiaomi']) > 0:
@@ -183,7 +170,7 @@ class LinJuPush(Task):
                                                    params['title'], params['content'], is_make_call))
             except Exception as e:
                 client.captureException()
-                self.logger.error("抛出异常: %s", e)
+                logging.error("抛出异常: %s", e)
 
             try:
                 if len(params['meizu']) > 0:
@@ -191,7 +178,7 @@ class LinJuPush(Task):
                                                    params['title'], params['content']))
             except Exception as e:
                 client.captureException()
-                self.logger.error("抛出异常: %s", e)
+                logging.error("抛出异常: %s", e)
 
             if 'topic' in params:
                 futures.append(executor.submit(self.mqtt.push, params['topic'], params['qos'],
@@ -201,7 +188,7 @@ class LinJuPush(Task):
                     response.update(future.result())
             except TimeoutError as e:
                 client.captureException()
-                self.logger.error("超时异常：%s", e)
+                logging.error("超时异常：%s", e)
 
         return response
 
@@ -209,31 +196,23 @@ class LinJuPush(Task):
 class YiJiaQinPush(Task):
 
     def __init__(self):
-        self.logger = logging.getLogger('doordu-push')
-        fh = logging.FileHandler(os.path.join(os.path.dirname(__file__),'doordu-push.log'))
-        formatter = logging.Formatter(
-            '%(asctime)s - %(name)s - %(levelname)s - %(filename)s - %(lineno)d - %(message)s')
-        fh.setLevel(logging.INFO)
-        fh.setFormatter(formatter)
-        self.logger.addHandler(fh)
-        self.logger.setLevel(logging.INFO)
         self.config = config
         APPID = '195715545587f05038f77a42317efb84'
 
-        self.apns = Apns(self.logger, self.config['general']['use_sandbox'],
+        self.apns = Apns(self.config['general']['use_sandbox'],
                          self.config[APPID]['apns']['cert_filename'],
                          self.config[APPID]['apns']['passphrase'],
                          self.config[APPID]['apns']['bundle_id'],
                          client)
 
-        self.huawei = HuaWei(self.logger, self.config[APPID]['huawei']['client_id'],
+        self.huawei = HuaWei(self.config[APPID]['huawei']['client_id'],
                                           self.config[APPID]['huawei']['client_secret'])
-        self.xiaomi = XiaoMi(self.logger, self.config[APPID]['xiaomi']['secret_key'],
+        self.xiaomi = XiaoMi(self.config[APPID]['xiaomi']['secret_key'],
                                           self.config[APPID]['xiaomi']['package_name'])
-        self.meizu = MeiZu(self.logger, self.config[APPID]['meizu']['app_id'],
+        self.meizu = MeiZu(self.config[APPID]['meizu']['app_id'],
                                           self.config[APPID]['meizu']['secret_key'])
 
-        self.mqtt = MQTT(self.logger, self.config['mqtt']['host'], self.config['mqtt']['port'])
+        self.mqtt = MQTT(self.config['mqtt']['host'], self.config['mqtt']['port'])
 
     def run(self, params):
         response = {}
@@ -247,7 +226,7 @@ class YiJiaQinPush(Task):
                                    params['message']))
             except Exception as e:
                 client.captureException()
-                self.logger.error("抛出异常: %s", e)
+                logging.error("抛出异常: %s", e)
 
             try:
                 if len(params['huawei']) > 0:
@@ -255,7 +234,7 @@ class YiJiaQinPush(Task):
                                                    params['title'], params['content']))
             except Exception as e:
                 client.captureException()
-                self.logger.error("抛出异常: %s", e)
+                logging.error("抛出异常: %s", e)
 
             try:
                 if len(params['xiaomi']) > 0:
@@ -268,7 +247,7 @@ class YiJiaQinPush(Task):
                                                    params['title'], params['content'], is_make_call))
             except Exception as e:
                 client.captureException()
-                self.logger.error("抛出异常: %s", e)
+                logging.error("抛出异常: %s", e)
 
             try:
                 if len(params['meizu']) > 0:
@@ -276,7 +255,7 @@ class YiJiaQinPush(Task):
                                                    params['title'], params['content']))
             except Exception as e:
                 client.captureException()
-                self.logger.error("抛出异常: %s", e)
+                logging.error("抛出异常: %s", e)
 
             if 'topic' in params:
                 futures.append(executor.submit(self.mqtt.push, params['topic'], params['qos'],
@@ -286,7 +265,7 @@ class YiJiaQinPush(Task):
                     response.update(future.result())
             except TimeoutError as e:
                 client.captureException()
-                self.logger.error("超时异常：%s", e)
+                logging.error("超时异常：%s", e)
 
         return response
 
@@ -294,36 +273,28 @@ class YiJiaQinPush(Task):
 class BanShengHuo(Task):
 
     def __init__(self):
-        self.logger = logging.getLogger('doordu-push')
-        fh = logging.FileHandler(os.path.join(os.path.dirname(__file__),'doordu-push.log'))
-        formatter = logging.Formatter(
-            '%(asctime)s - %(name)s - %(levelname)s - %(filename)s - %(lineno)d - %(message)s')
-        fh.setLevel(logging.INFO)
-        fh.setFormatter(formatter)
-        self.logger.addHandler(fh)
-        self.logger.setLevel(logging.INFO)
         self.config = config
         APPID = 'banshenghuo'
 
 
-        self.apns = Apns(self.logger, self.config['general']['use_sandbox'],
+        self.apns = Apns(self.config['general']['use_sandbox'],
                          self.config[APPID]['apns']['cert_filename'],
                          self.config[APPID]['apns']['passphrase'],
                          self.config[APPID]['apns']['bundle_id'],
                          client)
 
-        self.huawei = HuaWei(self.logger, self.config[APPID]['huawei']['client_id'],
+        self.huawei = HuaWei(self.config[APPID]['huawei']['client_id'],
                                           self.config[APPID]['huawei']['client_secret'])
-        self.xiaomi = XiaoMi(self.logger, self.config[APPID]['xiaomi']['secret_key'],
+        self.xiaomi = XiaoMi(self.config[APPID]['xiaomi']['secret_key'],
                                           self.config[APPID]['xiaomi']['package_name'])
-        self.meizu = MeiZu(self.logger, self.config[APPID]['meizu']['app_id'],
+        self.meizu = MeiZu(self.config[APPID]['meizu']['app_id'],
                                           self.config[APPID]['meizu']['secret_key'])
 
-        self.mqtt = MQTT(self.logger, self.config['mqtt']['host'], self.config['mqtt']['port'])
+        self.mqtt = MQTT(self.config['mqtt']['host'], self.config['mqtt']['port'])
 
     def run(self, params):
         response = {}
-        self.logger.info("Parameters: %s", params)
+        logging.info("Parameters: %s", params)
         with ThreadPoolExecutor(max_workers=6) as executor:
             futures = []
             try:
@@ -334,7 +305,7 @@ class BanShengHuo(Task):
                                    params['message']))
             except Exception as e:
                 client.captureException()
-                self.logger.error("抛出异常: %s", e)
+                logging.error("抛出异常: %s", e)
 
             try:
                 if len(params['huawei']) > 0:
@@ -342,7 +313,7 @@ class BanShengHuo(Task):
                                                    params['title'], params['content']))
             except Exception as e:
                 client.captureException()
-                self.logger.error("抛出异常: %s", e)
+                logging.error("抛出异常: %s", e)
 
             try:
                 if len(params['xiaomi']) > 0:
@@ -355,7 +326,7 @@ class BanShengHuo(Task):
                                                    params['title'], params['content'], is_make_call))
             except Exception as e:
                 client.captureException()
-                self.logger.error("抛出异常: %s", e)
+                logging.error("抛出异常: %s", e)
 
             try:
                 if len(params['meizu']) > 0:
@@ -363,7 +334,7 @@ class BanShengHuo(Task):
                                                    params['title'], params['content']))
             except Exception as e:
                 client.captureException()
-                self.logger.error("抛出异常: %s", e)
+                logging.error("抛出异常: %s", e)
 
             if 'topic' in params:
                 futures.append(executor.submit(self.mqtt.push, params['topic'], params['qos'],
@@ -373,7 +344,7 @@ class BanShengHuo(Task):
                     response.update(future.result())
             except TimeoutError as e:
                 client.captureException()
-                self.logger.error("超时异常：%s", e)
+                logging.error("超时异常：%s", e)
 
         return response
 
@@ -381,36 +352,27 @@ class BanShengHuo(Task):
 class Police(Task):
 
     def __init__(self):
-        self.logger = logging.getLogger('doordu-push')
-        fh = logging.FileHandler(os.path.join(os.path.dirname(__file__),'doordu-push.log'))
-        formatter = logging.Formatter(
-            '%(asctime)s - %(name)s - %(levelname)s - %(filename)s - %(lineno)d - %(message)s')
-        fh.setLevel(logging.INFO)
-        fh.setFormatter(formatter)
-        self.logger.addHandler(fh)
-        self.logger.setLevel(logging.INFO)
         self.config = config
         APPID = 'police'
-        print(self.config[APPID]['apns']['passphrase'])
 
-        self.apns = Apns(self.logger, self.config['general']['use_sandbox'],
+        self.apns = Apns(self.config['general']['use_sandbox'],
                          self.config[APPID]['apns']['cert_filename'],
                          self.config[APPID]['apns']['passphrase'],
                          self.config[APPID]['apns']['bundle_id'],
                          client)
 
-        self.huawei = HuaWei(self.logger, self.config[APPID]['huawei']['client_id'],
+        self.huawei = HuaWei(self.config[APPID]['huawei']['client_id'],
                                           self.config[APPID]['huawei']['client_secret'])
-        self.xiaomi = XiaoMi(self.logger, self.config[APPID]['xiaomi']['secret_key'],
+        self.xiaomi = XiaoMi(self.config[APPID]['xiaomi']['secret_key'],
                                           self.config[APPID]['xiaomi']['package_name'])
-        self.meizu = MeiZu(self.logger, self.config[APPID]['meizu']['app_id'],
+        self.meizu = MeiZu(self.config[APPID]['meizu']['app_id'],
                                           self.config[APPID]['meizu']['secret_key'])
 
-        self.mqtt = MQTT(self.logger, self.config['mqtt']['host'], self.config['mqtt']['port'])
+        self.mqtt = MQTT(self.config['mqtt']['host'], self.config['mqtt']['port'])
 
     def run(self, params):
         response = {}
-        self.logger.info("Parameters: %s", params)
+        logging.info("Parameters: %s", params)
         with ThreadPoolExecutor(max_workers=6) as executor:
             futures = []
             try:
@@ -421,7 +383,7 @@ class Police(Task):
                                    params['message']))
             except Exception as e:
                 client.captureException()
-                self.logger.error("抛出异常: %s", e)
+                logging.error("抛出异常: %s", e)
 
             try:
                 if len(params['huawei']) > 0:
@@ -429,7 +391,7 @@ class Police(Task):
                                                    params['title'], params['content']))
             except Exception as e:
                 client.captureException()
-                self.logger.error("抛出异常: %s", e)
+                logging.error("抛出异常: %s", e)
 
             try:
                 if len(params['xiaomi']) > 0:
@@ -442,7 +404,7 @@ class Police(Task):
                                                    params['title'], params['content'], is_make_call))
             except Exception as e:
                 client.captureException()
-                self.logger.error("抛出异常: %s", e)
+                logging.error("抛出异常: %s", e)
 
             try:
                 if len(params['meizu']) > 0:
@@ -450,7 +412,7 @@ class Police(Task):
                                                    params['title'], params['content']))
             except Exception as e:
                 client.captureException()
-                self.logger.error("抛出异常: %s", e)
+                logging.error("抛出异常: %s", e)
 
             if 'topic' in params:
                 futures.append(executor.submit(self.mqtt.push, params['topic'], params['qos'],
@@ -460,7 +422,7 @@ class Police(Task):
                     response.update(future.result())
             except TimeoutError as e:
                 client.captureException()
-                self.logger.error("超时异常：%s", e)
+                logging.error("超时异常：%s", e)
 
         return response
 
@@ -468,36 +430,28 @@ class Police(Task):
 class DoorDuSdk(Task):
 
     def __init__(self):
-        self.logger = logging.getLogger('doordu-push')
-        fh = logging.FileHandler(os.path.join(os.path.dirname(__file__),'doordu-push.log'))
-        formatter = logging.Formatter(
-            '%(asctime)s - %(name)s - %(levelname)s - %(filename)s - %(lineno)d - %(message)s')
-        fh.setLevel(logging.INFO)
-        fh.setFormatter(formatter)
-        self.logger.addHandler(fh)
-        self.logger.setLevel(logging.INFO)
         self.config = config
         APPID = 'e6mdd6w5mpux6gx1vslq61riowe0mgk1'
 
 
-        self.apns = Apns(self.logger, self.config['general']['use_sandbox'],
+        self.apns = Apns(self.config['general']['use_sandbox'],
                          self.config[APPID]['apns']['cert_filename'],
                          self.config[APPID]['apns']['passphrase'],
                          self.config[APPID]['apns']['bundle_id'],
                          client)
 
-        self.huawei = HuaWei(self.logger, self.config[APPID]['huawei']['client_id'],
+        self.huawei = HuaWei(self.config[APPID]['huawei']['client_id'],
                                           self.config[APPID]['huawei']['client_secret'])
-        self.xiaomi = XiaoMi(self.logger, self.config[APPID]['xiaomi']['secret_key'],
+        self.xiaomi = XiaoMi(self.config[APPID]['xiaomi']['secret_key'],
                                           self.config[APPID]['xiaomi']['package_name'])
-        self.meizu = MeiZu(self.logger, self.config[APPID]['meizu']['app_id'],
+        self.meizu = MeiZu(self.config[APPID]['meizu']['app_id'],
                                           self.config[APPID]['meizu']['secret_key'])
 
-        self.mqtt = MQTT(self.logger, self.config['mqtt']['host'], self.config['mqtt']['port'])
+        self.mqtt = MQTT(self.config['mqtt']['host'], self.config['mqtt']['port'])
 
     def run(self, params):
         response = {}
-        self.logger.info("Parameters: %s", params)
+        logging.info("Parameters: %s", params)
         with ThreadPoolExecutor(max_workers=6) as executor:
             futures = []
             try:
@@ -508,7 +462,7 @@ class DoorDuSdk(Task):
                                    params['message']))
             except Exception as e:
                 client.captureException()
-                self.logger.error("抛出异常: %s", e)
+                logging.error("抛出异常: %s", e)
 
             try:
                 if len(params['huawei']) > 0:
@@ -516,7 +470,7 @@ class DoorDuSdk(Task):
                                                    params['title'], params['content']))
             except Exception as e:
                 client.captureException()
-                self.logger.error("抛出异常: %s", e)
+                logging.error("抛出异常: %s", e)
 
             try:
                 if len(params['xiaomi']) > 0:
@@ -529,7 +483,7 @@ class DoorDuSdk(Task):
                                                    params['title'], params['content'], is_make_call))
             except Exception as e:
                 client.captureException()
-                self.logger.error("抛出异常: %s", e)
+                logging.error("抛出异常: %s", e)
 
             try:
                 if len(params['meizu']) > 0:
@@ -537,7 +491,7 @@ class DoorDuSdk(Task):
                                                    params['title'], params['content']))
             except Exception as e:
                 client.captureException()
-                self.logger.error("抛出异常: %s", e)
+                logging.error("抛出异常: %s", e)
 
             if 'topic' in params:
                 futures.append(executor.submit(self.mqtt.push, params['topic'], params['qos'],
@@ -547,6 +501,6 @@ class DoorDuSdk(Task):
                     response.update(future.result())
             except TimeoutError as e:
                 client.captureException()
-                self.logger.error("超时异常：%s", e)
+                logging.error("超时异常：%s", e)
 
         return response

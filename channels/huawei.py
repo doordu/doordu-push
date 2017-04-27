@@ -1,6 +1,7 @@
 import time
 import json
 import datetime
+import logging
 
 import requests
 from requests.exceptions import ConnectTimeout
@@ -8,13 +9,12 @@ from requests.exceptions import ConnectTimeout
 
 class HuaWei:
 
-    def __init__(self, logger, client_id, client_secret):
-        self.logger = logger
+    def __init__(self, client_id, client_secret):
         self.client_id = client_id
         self.client_secret = client_secret
         self.access_token = None
         self.expire_at = 0
-        self.logger.info("开始处理华为推送")
+        logging.info("开始处理华为推送")
 
     def auth(self):
         r = requests.post("https://login.vmall.com/oauth2/token", data={
@@ -25,15 +25,15 @@ class HuaWei:
         response = r.json()
         self.access_token = response['access_token']
         self.expire_at = int(response['expires_in'])
-        self.logger.info("Access Token: %s, Expire At: %s", self.access_token, self.expire_at)
+        logging.info("Access Token: %s, Expire At: %s", self.access_token, self.expire_at)
 
     def push(self, tokens, title, content):
         current_timestamp = int(time.time())
         if self.expire_at - current_timestamp < 300:
             self.auth()
 
-        self.logger.info("Tokens: %s", tokens)
-        self.logger.info("Title: %s", title)
+        logging.info("Tokens: %s", tokens)
+        logging.info("Title: %s", title)
 
         message = {'notification_title': title,
                    'notification_content': content,
@@ -56,10 +56,10 @@ class HuaWei:
                 'expire_time': expire_time,
             }, timeout=10)
 
-            self.logger.info("华为推送结束")
+            logging.info("华为推送结束")
             response = json.loads(json.loads(r.text))
-            self.logger.info(response)
+            logging.info(response)
         except ConnectTimeout:
-            self.logger.info("华为推送超时")
+            logging.info("华为推送超时")
 
         return {'huawei': response}

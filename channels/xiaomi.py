@@ -1,3 +1,5 @@
+import logging
+
 import requests
 from requests.exceptions import ConnectTimeout
 
@@ -5,15 +7,14 @@ URL = 'https://api.xmpush.xiaomi.com/v3/message/regid'
 
 
 class XiaoMi:
-    def __init__(self, logger, secret_key, package_name):
-        self.logger = logger
+    def __init__(self, secret_key, package_name):
         self.secret_key = secret_key
         self.package_name = package_name
-        self.logger.info("开始处理小米推送")
+        logging.info("开始处理小米推送")
 
     def push(self, tokens, title, content, is_ringtone=False):
-        self.logger.info("Tokens: {}".format(tokens))
-        self.logger.info("Title: {}".format(title))
+        logging.info("Tokens: {}".format(tokens))
+        logging.info("Title: {}".format(title))
 
         payload = {
             'payload': "",
@@ -38,10 +39,10 @@ class XiaoMi:
             r = requests.post(URL, headers={'Authorization': 'key={}'.format(self.secret_key)},
                               data=payload, timeout=10)
 
-            self.logger.info("小米推送结束")
+            logging.info("小米推送结束")
             response = r.json()
-            self.logger.info(response)
+            logging.info(response)
         except ConnectTimeout:
-            self.logger.info("小米推送异常")
+            logging.info("小米推送异常")
 
         return {'xiaomi': response}

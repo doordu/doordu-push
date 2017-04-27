@@ -6,14 +6,14 @@ mqtt:
   port: 1883
   
 redis:
-  host: 127.0.0.1
+  host: 10.0.0.71
   port: 6379
-  auth: doordu
+  auth: Doordu2015!!
     
 a47a7898481eabf77a1a5ce061f7908b:
   apns:
     cert_filename: doordu
-    passphrase: doordu123456
+    passphrase: '123456'
     bundle_id: com.doordu.doordushijie
   huawei:
     client_id: 10201628
@@ -93,7 +93,7 @@ banshenghuo:
 police:
   apns:
     cert_filename: police
-    passphrase: 123456
+    passphrase: '123456'
     bundle_id: com.doordu.Policeassistant
   huawei:
     client_id: 10746637
