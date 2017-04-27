@@ -65,6 +65,22 @@ e6mdd6w5mpux6gx1vslq61riowe0mgk1:
     bundle_id: com.doordu.doordusdk
   huawei:
     client_id: 10746637
+    client_secret: 9685f9ae53fdf63c5e4dbc57d7f5194b
+  xiaomi:
+    package_name: com.doordu.doordusdk
+    secret_key: RrJH4BZTPBVuIWL0TYjpxA==
+  meizu:
+    app_id: 110534
+    secret_key: ecf22c38b15546bc81292abd9fdd3891
+
+
+banshenghuo:
+  apns:
+    cert_filename: banshenghuo
+    passphrase: banshenghuo123
+    bundle_id: com.banshenghuo.banshenghuo
+  huawei:
+    client_id: 10746637
     client_secret: 9788943d64c57292f196e797d19f253b
   xiaomi:
     package_name: com.banshenghuo.mobile
@@ -74,11 +90,11 @@ e6mdd6w5mpux6gx1vslq61riowe0mgk1:
     secret_key: 132c402b651741e48b5385722fd18aa0
 
 
-banshenghuo:
+police:
   apns:
-    cert_filename: banshenghuo
-    passphrase: banshenghuo123
-    bundle_id: com.banshenghuo.banshenghuo
+    cert_filename: police
+    passphrase: 123456
+    bundle_id: com.doordu.Policeassistant
   huawei:
     client_id: 10746637
     client_secret: 9788943d64c57292f196e797d19f253b
