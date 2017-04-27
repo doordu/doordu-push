@@ -25,8 +25,8 @@ logger.addHandler(fh)
 logger.setLevel(logging.INFO)
 client = Client('https://97d0be6069704601a8000b2a95a1298b:2eaf1284edc04ef3b15d859d36919845@sdlog.doordu.com:8205/14')
 
-push = PushResource(config, logger, client)
-online = OnlineResource(config, logger, client)
+push = PushResource(config, client)
+online = OnlineResource(config, client)
 
 app.add_route('/push', push)
 app.add_route('/online', online)

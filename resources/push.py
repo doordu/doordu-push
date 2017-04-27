@@ -1,12 +1,13 @@
 import json
 import time
 import traceback
+import logging
 
 import falcon
 from redis import Redis
 
 from .base import Base
-from tasks import DoorDuPush, LinJuPush, YiJiaQinPush, BanShengHuo
+from tasks import DoorDuPush, LinJuPush, YiJiaQinPush, BanShengHuo, Police, DoorDuSdk
 from exceptions import ExpiredException, FrequentException
 
 
@@ -21,7 +22,9 @@ class PushResource(Base):
             'a47a7898481eabf77a1a5ce061f7908b': DoorDuPush(),
             '707c1b60fc22378fc22d4bd51bce7616': LinJuPush(),
             '195715545587f05038f77a42317efb84': YiJiaQinPush(),
+            'e6mdd6w5mpux6gx1vslq61riowe0mgk1': DoorDuSdk(),
             'banshenghuo': BanShengHuo(),
+            'police': Police(),
         }
         self.r = Redis(host=self.config['redis']['host'],
                        port=self.config['redis']['port'],
@@ -35,7 +38,7 @@ class PushResource(Base):
 
         try:
             message = json.loads(message)
-            self.logger.info(message)
+            logging.info(message)
             if not isinstance(message, list):
                 message = [message, ]
 
@@ -44,7 +47,7 @@ class PushResource(Base):
                     expired_at = params['message']['expiredAt']
                     current_timestamp = int(time.time())
                     if current_timestamp > expired_at:
-                        self.logger.info("已经过期!")
+                        logging.info("已经过期!")
                         raise ExpiredException()
                 except KeyError:
                     pass
@@ -55,7 +58,7 @@ class PushResource(Base):
                     transaction_id = params['message']['transactionID']
                     redis_key = 'push_{}_{}_{}'.format(topic, cmd, transaction_id)
                     if self.r.get(redis_key) is not None:
-                        self.logger.info("%s topic 请求频繁", redis_key)
+                        logging.info("%s topic 请求频繁", redis_key)
                         raise FrequentException()
                     self.r.setex(redis_key, topic, 1)
                 except KeyError:
@@ -69,8 +72,8 @@ class PushResource(Base):
 
             resp.status = falcon.HTTP_200
         except ValueError:
-            self.logger.info(params)
-            self.logger.info(traceback.format_exc())
+            logging.info(params)
+            logging.info(traceback.format_exc())
             response = {'status_code': 403, 'msg': "数据格式不正确"}
             resp.status = falcon.HTTP_403
         except ExpiredException:
