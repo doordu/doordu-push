@@ -13,7 +13,7 @@ redis:
 a47a7898481eabf77a1a5ce061f7908b:
   apns:
     cert_filename: doordu
-    passphrase: 123456
+    passphrase: doordu123456
     bundle_id: com.doordu.doordushijie
   huawei:
     client_id: 10201628
