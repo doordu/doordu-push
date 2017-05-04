@@ -61,7 +61,7 @@ a47a7898481eabf77a1a5ce061f7908b:
 e6mdd6w5mpux6gx1vslq61riowe0mgk1:
   apns:
     cert_filename: doordusdk
-    passphrase: 123456
+    passphrase: '123456'
     bundle_id: com.doordu.doordusdk
   huawei:
     client_id: 10746637
